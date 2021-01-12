@@ -1,0 +1,3 @@
+### 0.0.0 (Released 2021-1-7)
+* Additions:
+    * Initial set up for RELEASE_Notes.md
