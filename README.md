@@ -122,3 +122,15 @@ You can use [EdgeDevToolsPreview](https://www.microsoft.com/en-us/p/microsoft-ed
  - You will now have the full debug experience in your browser dev tools.
 
 Alternatively, you can debug all functionality that does not use Excel Interop in your normal browser (the app runs on port 3000 via https)
+
+### Office.js
+
+1. install ts2fable, needs typescript declaration files from office.js
+2. donwload office.js and create fs files from it
+3. adjust webpack and index.html
+
+Necessary links:
+- https://github.com/fable-compiler/ts2fable
+- https://www.npmjs.com/package/@microsoft/office-js
+- use office ja as external: [Swate/webpack.config.js at developer · nfdi4plants/Swate (github.com)](https://github.com/nfdi4plants/Swate/blob/developer/webpack.config.js#L117)
+- [Swate/index.html at developer · nfdi4plants/Swate (github.com)](https://github.com/nfdi4plants/Swate/blob/developer/src/Client/index.html#L5)
