@@ -1,6 +1,3 @@
-open System.Text
-
-
 #r "paket:
 nuget BlackFox.Fake.BuildTask
 nuget Fake.Core.Target
@@ -27,6 +24,7 @@ nuget Fake.Tools.Git //
 
 
 open System
+open System.Text
 open Fake
 open Fake.Core
 open Fake.DotNet
@@ -294,11 +292,6 @@ open Fake.Core.TargetOperators
     ==> "CreateDevCerts"
     ==> "SetLoopbackExempt"
     ==> "Setup"
-
-"Clean"
-    ==> "InstallClient"
-    ==> "Bundle"
-    ==> "Azure"
 
 "Clean"
     ==> "InstallClient"
