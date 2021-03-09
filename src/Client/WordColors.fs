@@ -5,16 +5,16 @@ open Fable.React.Props
 open Fulma
 
 //https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
-module Excel =
+module Word =
 
-        let Shade20    = "#004b1c"
-        let Shade10    = "#0e5c2f"
-        let Primary    = "#217346"
-        let Tint10     = "#3f8159"
-        let Tint20     = "#4e9668"
-        let Tint30     = "#6eb38a"
-        let Tint40     = "#9fcdb3"
-        let Tint50     = "#e9f5ee"
+        let Shade20    = "#002050"
+        let Shade10    = "#124078"
+        let Primary    = "#2b579a"
+        let Tint10     = "#3c65a4"
+        let Tint20     = "#4a78b0"
+        let Tint30     = "#7da3c6"
+        let Tint40     = "#a5b9d1"
+        let Tint50     = "#e3ecfa"
 
 module Colorfull =
 
@@ -79,11 +79,11 @@ let colorfullMode = {
     BodyForeground          = Colorfull.gray20
     ControlBackground       = Colorfull.white
     ControlForeground       = Colorfull.gray40
-    ElementBackground       = Excel.Tint10
+    ElementBackground       = Word.Tint10
     ElementForeground       = Colorfull.white
     Text                    = Colorfull.gray180
-    Accent                  = Excel.Primary
-    Fade                    = Excel.Tint30
+    Accent                  = Word.Primary
+    Fade                    = Word.Tint30
 }
 
 let colorElement (mode:ColorMode) =

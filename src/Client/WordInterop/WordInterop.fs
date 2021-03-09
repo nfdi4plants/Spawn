@@ -31,49 +31,26 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Messages.Msg> =
             Cmd.OfPromise.either
                 OfficeInterop.exampleExcelFunction
                 ()
-                (Messages.LogResults)
-                (Messages.LogError)
+                (Messages.Dev.LogResults >> Messages.DevMsg)
+                (Messages.Dev.LogError >> Messages.DevMsg)
         currentModel, cmd
     //| _ ->
     //    currentModel,Cmd.none
 
-let errorField model dispatch =
+let mainElement (model:Model.Model) dispatch =
     div [][
-        Notification.notification [
-            Notification.Color IsDanger
-            Notification.Props [Style [
-                MaxWidth "900px";
-                MarginTop "1rem"; MarginRight "0.35rem"; MarginLeft "0.35rem"
-            ]]
-        ] [
-            Notification.delete [
-                Props [OnClick (fun e -> UpdateDebug None |> dispatch )]
-            ] [ ]
-            str model.Debug.Value
-        ]
-    ]
-
-let mainElement (model:Model) dispatch =
-    Box.box' [] [
-        match model.Debug with
-        | Some _ -> errorField model dispatch
-        | None -> div [][]
-
-        str "Welcome to WordInterop"
-
-        Button.button [
-            Button.IsFullWidth
-            Button.Color IsInfo
-            Button.OnClick (fun e ->
-                TryWord |> dispatch
-            )
-        ][
-            str "Try Word"
+        Label.label [Label.Size IsLarge; Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Template"]
+    
+        //debugBox model dispatch
+    
+        Label.label [Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Sub header"]
+        Customcomponents.subModuleBox [
+            str "Example"
         ]
     ]
 
 type Props = {
-    Model: Model
+    Model: Model.Model
     Dispatch: Msg -> unit
 }
 

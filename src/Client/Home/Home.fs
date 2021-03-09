@@ -29,33 +29,14 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Messages.Msg> =
     //| _ ->
     //    currentModel,Cmd.none
 
-let errorField model dispatch =
-    div [][
-        Notification.notification [
-            Notification.Color IsDanger
-            Notification.Props [Style [
-                MaxWidth "900px";
-                MarginTop "1rem"; MarginRight "0.35rem"; MarginLeft "0.35rem"
-            ]]
-        ] [
-            Notification.delete [
-                Props [OnClick (fun e -> UpdateDebug None |> dispatch )]
-            ] [ ]
-            str model.Debug.Value
-        ]
-    ]
-
-let mainElement (model:Model) dispatch =
-    Box.box' [][
-        match model.Debug with
-        | Some _ -> errorField model dispatch
-        | None -> div [][]
-
-        Content.content [][str "welcome Home"]
+let mainElement (model:Model.Model) dispatch =
+    Container.container [][
+        div [][ str "This is the Spawn web host. For a preview click on the following link." ]
+        a [ Href (Routing.Route.ActivityLog.toRouteUrl) ] [ str Routing.Route.ActivityLog.toStringRdbl ]
     ]
 
 type Props = {
-    Model: Model
+    Model: Model.Model
     Dispatch: Msg -> unit
 }
 

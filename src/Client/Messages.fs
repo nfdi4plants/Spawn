@@ -13,16 +13,22 @@ module WordInterop =
     | UpdateDebug of string option
     | TryWord
 
+module Dev =
+
+    type Msg =
+    | LogResults            of string
+    | LogInfo               of string
+    | LogError              of exn
+    | UpdateLastFullError   of exn option
+
 type Msg =
 | UpdateAppVersion      of string
+// Utils
+| Batch                 of seq<Msg>
 // Style
 | ToggleNavbarBurger
 | UpdateActivePage      of Routing.Route option
-// Utils
-| Batch                 of seq<Msg>
-| LogResults            of string
-| LogInfo               of string
-| LogError              of exn
 // Submodel-Messages
+| DevMsg                of Dev.Msg
 | HomeMsg               of Home.Msg
 | WordInteropMsg        of WordInterop.Msg

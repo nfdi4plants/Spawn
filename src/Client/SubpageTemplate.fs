@@ -41,34 +41,20 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     //| _ ->
     //    currentModel,Cmd.none
 
-let errorField model dispatch =
+let mainElement (model:Model.Model) dispatch =
     div [][
-        Notification.notification [
-            Notification.Color IsDanger
-            Notification.Props [Style [
-                MaxWidth "900px";
-                MarginTop "1rem"; MarginRight "0.35rem"; MarginLeft "0.35rem"
-            ]]
-        ] [
-            Notification.delete [
-                Props [OnClick (fun e -> UpdateDebug None |> dispatch )]
-            ] [ ]
-            str model.Debug.Value
+        Label.label [Label.Size IsLarge; Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Template"]
+    
+        //debugBox model dispatch
+    
+        Label.label [Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Sub header"]
+        Customcomponents.subModuleBox [
+            str "Example"
         ]
     ]
 
-
-let mainElement (model:Model) dispatch =
-    div [] [
-        match model.Debug with
-        | Some _ -> errorField model dispatch
-        | None -> div [][]
-
-        str "Welcome HOME"
-    ]
-
 type Props = {
-    Model: Model
+    Model: Model.Model
     Dispatch: Msg -> unit
 }
 

@@ -7,8 +7,8 @@ $family-primary: 'Open Sans';
 /*
 // Bulma*/
 
-$excelPrimary: #217346;
-$excelPrimary30: #639d7d;
+$wordPrimary: #2b579a;
+$wordPrimary30: #002050;
 
 $mint: #1FC2A7;
 $lightBlue: #4fb3d9;
@@ -17,13 +17,13 @@ $red: #c21f3a; //#e83151;//#E32746;
 $yellow: #FFC000;
 
 // global bulma overrides
-$primary: $excelPrimary;
+$primary: $wordPrimary;
 $success: $mint;
 $info: $lightBlue;
 $danger: $red;
 $warning: $yellow;
 
-$switch-background-active: $excelPrimary;
+$switch-background-active: $wordPrimary;
 
 @import "~bulma/bulma";
 @import "~bulma-switch";
@@ -43,6 +43,10 @@ html, body {
 
 .button:disabled, .button[disabled] {
     opacity: 0.5
+}
+
+a.navbar-item:hover {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)) !important;
 }
 
 .input {
@@ -66,4 +70,85 @@ a {
 
 a:hover {
     color: #3f8fae
+}
+
+.hideUnder775px {
+    display: unset
+}
+
+.hideOver775px {
+    display: none
+}
+
+.myFlexText {
+    text-align: justify;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+
+/// Brands
+
+.nfdiIcon {
+    display: inline-block;
+    width: 59px;
+    height: 59px;
+    margin: 2px 1px;
+    transition: 0.2s opacity;
+}
+
+.nfdiIcon:hover {
+    opacity: 0.7
+}
+
+.myFaBrand {
+    padding: 13px;
+    font-size: 30px;
+    /*    width: 50px;*/
+    text-align: center;
+    text-decoration: none;
+    margin: 2px 1px;
+    transition: 0.2s opacity
+}
+
+.myFaBrand:hover {
+    opacity: 0.7;
+}
+
+.myFaTwitter {
+    background: #55ACEE;
+    color: white;
+}
+
+.myFaCSB {
+    background: #ed7d31;
+    color: white;
+}
+
+.myFaGithub {
+    background: #24292e;
+    color: white
+}
+
+@media only screen and (max-width: 768px) {
+
+    .hideUnder775px {
+        display: none
+    }
+
+    .myFlexText {
+        font-size: 1rem;
+        width: 90%;
+        margin: auto;
+        margin-bottom: 0.5rem;
+    }
+
+    .flexToCentered {
+        text-align: center
+    }
+
+    .hideOver775px {
+        display: unset
+    }
+
 }

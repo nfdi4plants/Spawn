@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>5d6f5462-3401-48ec-9406-d12882e9ad83</Id>
   <Version>0.4.2</Version>
@@ -13,7 +13,7 @@
     <AppDomain>bio.uni-kl.de</AppDomain>
   </AppDomains>
   <Hosts>
-    <Host Name="Workbook"/>
+    <Host Name="Document"/>
   </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://localhost:3000/"/>
@@ -21,7 +21,7 @@
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
     <Hosts>
-      <Host xsi:type="Workbook">
+      <Host xsi:type="Document">
         <DesktopFormFactor>
           <GetStarted>
             <Title resid="GetStarted.Title"/>
@@ -29,7 +29,7 @@
             <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
           </GetStarted>
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
-            <OfficeTab id="TabData">
+            <OfficeTab id="TabReviewWord">
               <Group id="SpawnCommands">
                 <Label resid="SpawnCommands.Label"/>
                 <Icon>
@@ -85,8 +85,7 @@
       </bt:Images>
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
-        <!--<bt:Url id="TermSearch.Url" DefaultValue="https://localhost:3000/#TermSearch"/>-->
-        <bt:Url id="Home.Url" DefaultValue="https://localhost:3000/"/>
+        <bt:Url id="Home.Url" DefaultValue="https://localhost:3000/WordInterop"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started annotating your data for greater good!"/>
@@ -95,7 +94,7 @@
         <bt:String id="Home.Label" DefaultValue="Spawn"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Spawn was loaded succesfully. Go to the DATA tab and click the 'Spawn' button to get started."/>
+        <bt:String id="GetStarted.Description" DefaultValue="Spawn was loaded succesfully. Go to the REVIEW tab and click the 'Spawn' button to get started."/>
         <!--<bt:String id="TermSearch.Tooltip" DefaultValue="Open a taskpane where you can search for ontology terms in multiple ways and fill the results into your sheet."/>-->
         <bt:String id="Home.Tooltip" DefaultValue="Open a task pane to gain full access to the Spawn functionality."/>
       </bt:LongStrings>
