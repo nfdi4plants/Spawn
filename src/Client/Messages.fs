@@ -21,6 +21,7 @@ type Msg =
 // Utils
 | Batch                 of seq<Msg>
 | LogResults            of string
+| LogInfo               of string
 | LogError              of exn
 // Submodel-Messages
 | HomeMsg               of Home.Msg

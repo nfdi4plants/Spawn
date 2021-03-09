@@ -215,7 +215,6 @@ module ReleaseNoteTasks =
         let bodyText =
             [
                 ""
-                "The latest release features:"
                 ""
                 "You can check our [release notes](https://github.com/nfdi4plants/Spawn/blob/master/RELEASE_NOTES.md) to see a list of all new features."
                 "If you decide to test Spawn in the current state, please take the time to set up a Github account to report your issues and suggestions here."
@@ -235,20 +234,82 @@ module ReleaseNoteTasks =
                 "    - Under the Insert tab, select Add-Ins"
                 "    - Go to Manage my Add-Ins and select Upload my Add-In"
                 ""
+                "The latest release features:"
+                ""
             ] |> String.concat System.Environment.NewLine
 
         let assetBasePath = System.IO.Path.Combine(__SOURCE_DIRECTORY__,@".assets")
         let assetPath = System.IO.Path.Combine(assetBasePath,@"assets")
+        Github.zipAssets(assetPath,assetBasePath,"spawn.zip")
 
-        Github.zipAssets(assetPath,assetBasePath,"assets.zip")
+        let draft(owner:string, repoName:string, releaseBody:string option, assetPath: string option, config:TargetParameter) =
 
-        let zipPath = System.IO.Path.Combine(assetPath,"assets.zip")
+            let prevReleaseNotes = Fake.IO.File.read "RELEASE_NOTES.md"
+            let takeLastOfReleaseNotes =
+                let findInd =
+                    prevReleaseNotes
+                    |> Seq.indexed
+                    |> Seq.choose (fun (i,x) -> if x.StartsWith "###" then Some i else None)
+                match Seq.length findInd with
+                | 1 ->
+                    prevReleaseNotes
+                | x when x >= 2 ->
+                    let indOfSecondLastRN = findInd|> Seq.item 1
+                    Seq.take (indOfSecondLastRN - 1) prevReleaseNotes
+                | _ ->
+                    failwith "Previous RELEASE_NOTES.md not found or in wrong formatting"
 
-        Github.draft(
+            let bodyText =
+                [
+                    if releaseBody.IsSome then releaseBody.Value
+                    yield! takeLastOfReleaseNotes
+                ]
+
+            let tokenOpt =
+                config.Context.Arguments
+                |> List.tryFind (fun x -> x.StartsWith "token:")
+
+            let release = ReleaseNotes.load "RELEASE_NOTES.md"
+            let semVer = (sprintf "v%i.%i.%i" release.SemVer.Major release.SemVer.Minor release.SemVer.Patch)
+
+            let token =
+                match Environment.environVarOrDefault "github_token" "", tokenOpt with
+                | s, None when System.String.IsNullOrWhiteSpace s |> not -> s
+                | s, Some token when System.String.IsNullOrWhiteSpace s |> not ->
+                    Trace.traceImportant "Environment variable for token and token argument found. Will proceed with token passed as argument 'token:my-github-token'"
+                    token.Replace("token:","")
+                | _, Some token ->
+                    token.Replace("token:","")
+                | _, None ->
+                    failwith "please set the github_token environment variable to a github personal access token with repro access or pass the github personal access token as argument as in 'token:my-github-token'."
+
+            let files (assetPath:string) =
+                let assetDir = Fake.IO.DirectoryInfo.ofPath assetPath
+                /// This only accesses files and not folders. So in this case it will only access the .zip file created by "ZipAssets"
+                let assetsPaths = Fake.IO.DirectoryInfo.getFiles assetDir
+                assetsPaths |> Array.map (fun x -> x.FullName)
+
+            let draft = 
+                if assetPath.IsSome then
+                    let assetPaths = (files assetPath.Value)
+                    GitHub.createClientWithToken token
+                    |> GitHub.draftNewRelease owner repoName semVer (release.SemVer.PreRelease <> None) bodyText
+                    |> GitHub.uploadFiles assetPaths
+                    |> Async.RunSynchronously
+
+                else 
+                
+                    GitHub.createClientWithToken token
+                    |> GitHub.draftNewRelease owner repoName semVer (release.SemVer.PreRelease <> None) bodyText
+                    |> Async.RunSynchronously
+
+            Trace.tracef "Draft %A successfully created!" draft.Release.Name
+
+        draft(
             ProjectInfo.gitOwner,
             ProjectInfo.gitName,
             (Some bodyText),
-            (Some zipPath),
+            None,
             config
         )
     )

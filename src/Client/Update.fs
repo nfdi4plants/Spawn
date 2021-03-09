@@ -65,14 +65,21 @@ let update (msg: Msg) (currentModel: Model): Model * Cmd<Msg> =
             ]
         currentModel, cmd
     | LogResults str ->
-        let newLog = LogTypes.LogResult, str
+        let newLog = Logging.LogItem.create Logging.LogResult str
+        let nextModel = {
+            currentModel with
+                Logs = newLog::currentModel.Logs
+        }
+        nextModel, Cmd.none
+    | LogInfo msg ->
+        let newLog = Logging.LogItem.create Logging.LogInfo msg
         let nextModel = {
             currentModel with
                 Logs = newLog::currentModel.Logs
         }
         nextModel, Cmd.none
     | LogError exn ->
-        let newLog = LogTypes.LogError, exn.Message
+        let newLog = Logging.LogItem.create Logging.LogTypes.LogError exn.Message
         let nextModel = {
             currentModel with
                 Logs = newLog::currentModel.Logs

@@ -7,4 +7,7 @@ Fable.FontAwesome.Free
 Fable.Remoting.Client
 Fable.React
 Fulma
+Fulma.Extensions.Wikiki.Tooltip
+Fulma.Extensions.Wikiki.Switch
+ISADotNet.Fable
 Thoth.Elmish.Debouncer

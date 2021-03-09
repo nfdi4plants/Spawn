@@ -4,13 +4,31 @@
 $FontPathOpenSans: "~open-sans-fonts/open-sans";
 $family-primary: 'Open Sans';
 
+/*
+// Bulma*/
 
-// Bulma
+$excelPrimary: #217346;
+$excelPrimary30: #639d7d;
+
+$mint: #1FC2A7;
+$lightBlue: #4fb3d9;
+$lightBlueLighter20: #72c2e1;
+$red: #c21f3a; //#e83151;//#E32746;
+$yellow: #FFC000;
+
+// global bulma overrides
+$primary: $excelPrimary;
+$success: $mint;
+$info: $lightBlue;
+$danger: $red;
+$warning: $yellow;
+
+$switch-background-active: $excelPrimary;
+
 @import "~bulma/bulma";
-/*@import "~bulma-switch";
+@import "~bulma-switch";
 @import "~bulma-tooltip";
-@import "~bulma-checkradio";
-@import "~bulma-slider";*/
+/*@import "~bulma-checkradio";*/
 
 html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -23,7 +41,29 @@ html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+.button:disabled, .button[disabled] {
+    opacity: 0.5
+}
+
 .input {
     @extend .input;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.textarea {
+    @extend .textarea;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+    border: 3px solid lightgrey;
+}
+
+.textarea:focus {
+    border-color: $mint
+}
+
+a {
+    color: $info
+}
+
+a:hover {
+    color: #3f8fae
 }

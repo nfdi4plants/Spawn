@@ -2,25 +2,41 @@ module Model
 
 open Shared
 
-//type PageModel =
-//| HomeModel of Home.Model
 
-type LogTypes =
-| LogError
-| LogResult
-| LogInfo
-    with
-        member this.toReadableString =
-            match this with
-            | LogError   -> "Error"
-            | LogResult  -> "Result"
-            | LogInfo    -> "Info"
+module Logging =
 
-        member this.toColor =
-            match this with
-            | LogError   -> "hsl(348, 100%, 61%)"
-            | LogResult  -> "hsl(141, 53%, 53%)"
-            | LogInfo    -> "hsl(204, 86%, 53%)"
+    type LogTypes =
+    | LogError
+    | LogResult
+    | LogInfo
+        with
+            member this.toReadableString =
+                match this with
+                | LogError   -> "Error"
+                | LogResult  -> "Result"
+                | LogInfo    -> "Info"
+
+            member this.toColor =
+                match this with
+                | LogError   -> NFDIColors.Red.Base
+                | LogResult  -> NFDIColors.Mint.Base
+                | LogInfo    -> NFDIColors.LightBlue.Base
+
+            static member ofString (str:string) =
+                match str with
+                | "Error" | "error"     -> LogError
+                | "Info" | "info"       -> LogInfo
+                | "Result"| "result"    -> LogResult
+                | others -> failwith (sprintf "Swate found an unexpected log identifier: %s" others)
+
+    type LogItem = {
+        LogType : LogTypes
+        Message : string
+    } with
+        static member create logtype msg = {
+            LogType = logtype
+            Message = msg
+        }
 
 type SiteStyleState = {
     BurgerVisible: bool
@@ -67,7 +83,7 @@ type Model = {
     PersistentStorage       : PersistentStorage
     Todos                   : Todo list
     Input                   : string
-    Logs                    : (LogTypes*string) list
+    Logs                    : Logging.LogItem list
     ActivePage              : Routing.Route option
     // Subpage models
     HomeModel               : Home.Model

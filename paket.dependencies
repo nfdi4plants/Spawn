@@ -19,5 +19,8 @@ nuget Fable.React
 nuget Fable.Remoting.Client
 nuget Fable.Promise
 nuget Fulma
+nuget Fulma.Extensions.Wikiki.Tooltip
+nuget Fulma.Extensions.Wikiki.Switch
 nuget Thoth.Elmish.Debouncer
+nuget ISADotNet.Fable
 

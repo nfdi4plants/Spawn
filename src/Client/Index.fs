@@ -76,12 +76,11 @@ let displayLogs (model:Model) dispatch =
             ]
             tbody [][
                 for log in model.Logs do
-                    let logType = fst log
                     yield tr [][
-                        td [Style [Color logType.toColor]][
-                            str logType.toReadableString
+                        td [Style [Color log.LogType.toColor]][
+                            str log.LogType.toReadableString
                         ]
-                        td [][str (snd log)]
+                        td [][str log.Message]
                     ]
             ]
         ]

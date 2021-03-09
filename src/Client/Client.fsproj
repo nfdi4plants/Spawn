@@ -5,6 +5,8 @@
         <DefineConstants>FABLE_COMPILER</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
+        <Compile Include="NFDIColors.fs" />
+        <Compile Include="WordColors.fs" />
         <None Include="style.scss" />
         <Compile Include="SubpageTemplate.fs" />
         <Compile Include="Routing.fs" />
