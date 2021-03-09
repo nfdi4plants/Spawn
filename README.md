@@ -3,11 +3,11 @@
 
 __Spawn__ is a **S**wate **P**rotocol **A**rchitect for **W**ord **N**otes.
 
-Spawn tries to make the transfer of old Word protocols into modern workflow annotations as easy and fast as possible. We will design this process t be perfectly integrable with [Swate](https://github.com/nfdi4plants/Swate) and [Arc](https://github.com/nfdi4plants/ARC).
+Spawn tries to make the transfer of old Word protocols into modern workflow annotations as easy and fast as possible. We will design this process to be perfectly integrable with [Swate](https://github.com/nfdi4plants/Swate) and [Arc](https://github.com/nfdi4plants/ARC).
 
 ## Install/Use
 
-You can test swate by following the steps below. If you decide to do so, please take the time to set up a Github account to report your issues and suggestions [here](https://github.com/nfdi4plants/Spawn/issues).
+You can test Spawn by following the steps below. If you decide to do so, please take the time to set up a Github account to report your issues and suggestions [here](https://github.com/nfdi4plants/Spawn/issues).
 You can also search existing issues for solutions for your questions and/or discussions about your suggestions.
 
 ### Word desktop (WIP)
@@ -24,7 +24,7 @@ If you have administrative access in your organization, you can create a network
 
 ### Excel online (WIP)
 
-- Download the [latest test release archive](https://github.com/nfdi4plants/Swate/releases) and extract it
+- Download the [latest test release archive]() and extract it
 - Launch Excel online, open a (blank) workbook 
 - Under the `Insert` tab, select `Add-Ins`
 - Go to `Manage my Add-Ins` and select `Upload my Add-In`
@@ -36,7 +36,7 @@ If you have administrative access in your organization, you can create a network
 
 #### API docs
 
-The RPC API docs of Swate are available [here]().
+The RPC API docs of Spawn are available [here]().
 
 #### Feature documentation
 
@@ -98,7 +98,7 @@ Before you contribute to the project remember to return all placeholders to your
 ### use install.cmd
 
 The install.cmd executes several console commands for one of which it needs adminstratorial rights (dotnet fake build -t setup) to install the certificate mentioned above.
-Open powershell as adminstrator and navigate to the Swate-folder ```cd your\folder\path\Swate``` then use ```.\install.cmd``` to initialize the setup.
+Open powershell as adminstrator and navigate to the Spawn-folder ```cd your\folder\path\Spawn``` then use ```.\install.cmd``` to initialize the setup.
 While running a installation dialogue for the certificate will open and can be handled as described above.
 
 ### Project Decription
@@ -122,3 +122,15 @@ You can use [EdgeDevToolsPreview](https://www.microsoft.com/en-us/p/microsoft-ed
  - You will now have the full debug experience in your browser dev tools.
 
 Alternatively, you can debug all functionality that does not use Excel Interop in your normal browser (the app runs on port 3000 via https)
+
+### Office.js
+
+1. install ts2fable, needs typescript declaration files from office.js
+2. donwload office.js and create fs files from it
+3. adjust webpack and index.html
+
+Necessary links:
+- https://github.com/fable-compiler/ts2fable
+- https://www.npmjs.com/package/@microsoft/office-js
+- use office ja as external: [Swate/webpack.config.js at developer · nfdi4plants/Swate (github.com)](https://github.com/nfdi4plants/Swate/blob/developer/webpack.config.js#L117)
+- [Swate/index.html at developer · nfdi4plants/Swate (github.com)](https://github.com/nfdi4plants/Swate/blob/developer/src/Client/index.html#L5)
