@@ -9,6 +9,7 @@ open Shared
 
 open Model.WordInterop
 open Messages.WordInterop
+open Messages
 
 let init () :  Model * Cmd<Msg> =
     let initialModel = {
@@ -17,7 +18,7 @@ let init () :  Model * Cmd<Msg> =
     }
     initialModel, Cmd.none
 
-let update (msg : Msg) (currentModel : Model) : Model * Cmd<Messages.Msg> =
+let update (msg : WordInterop.Msg) (currentModel : Model) : Model * Cmd<Messages.Msg> =
     match msg with
     | UpdateDebug stringOpt ->
         let nextModel = {
@@ -45,8 +46,16 @@ let mainElement (model:Model.Model) dispatch =
     
         Label.label [Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Sub header"]
         Customcomponents.subModuleBox [
-            str "Example"
+            Button.a [
+                Button.IsFullWidth
+                Button.Color IsInfo
+                Button.OnClick (fun e -> SwateDB.GetAllOntologiesRequest |> SwateDBMsg |> dispatch)
+            ][
+                str "Get Ontologies"
+            ]
+            str (sprintf "%A" model.PersistentStorage.AllOntologies)
         ]
+        
     ]
 
 type Props = {

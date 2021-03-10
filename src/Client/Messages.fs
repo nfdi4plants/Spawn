@@ -21,14 +21,22 @@ module Dev =
     | LogError              of exn
     | UpdateLastFullError   of exn option
 
+module SwateDB =
+
+    type Msg =
+    | GetAllOntologiesRequest
+    | GetAllOntologiesResponse  of SwateTypes.DbDomain.Ontology []
+
+
 type Msg =
-| UpdateAppVersion      of string
+| UpdateAppVersion          of string
 // Utils
-| Batch                 of seq<Msg>
+| Batch                     of seq<Msg>
 // Style
 | ToggleNavbarBurger
-| UpdateActivePage      of Routing.Route option
+| UpdateActivePage          of Routing.Route option
 // Submodel-Messages
-| DevMsg                of Dev.Msg
-| HomeMsg               of Home.Msg
-| WordInteropMsg        of WordInterop.Msg
+| DevMsg                    of Dev.Msg
+| HomeMsg                   of Home.Msg
+| WordInteropMsg            of WordInterop.Msg
+| SwateDBMsg                of SwateDB.Msg

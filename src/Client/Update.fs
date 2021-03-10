@@ -23,14 +23,11 @@ let urlUpdate (route:Route option) (model:Model) =
             { model with
                 WordInteropModel = m
                 ActivePage = Some Routing.WordInterop }
-        nextModel, Cmd.map WordInteropMsg cmd
+        nextModel, cmd
     | Some Route.ActivityLog ->
-        let m = DevState.init()
-        let nextModel =
-            { model with
-                DevState = m
-                ActivePage = Some Routing.ActivityLog }
-        nextModel, Cmd.none
+        model, Cmd.none
+    | Some Route.Info ->
+        model, Cmd.none
     | None ->
         model, Cmd.ofMsg (exn("Could not find navigated route!") |> Dev.LogError |> DevMsg )
 
@@ -65,6 +62,27 @@ module Dev =
             let nextModel = {
                 currentModel with
                     LastFullError = exnOpt
+            }
+            nextModel, Cmd.none
+
+module SwateDB =
+
+    open Messages.SwateDB
+
+    let update (msg:SwateDB.Msg) (currentModel: Model.Model): Model.Model * Cmd<Messages.Msg> =
+        match msg with
+        | GetAllOntologiesRequest ->
+            let cmd =
+                Cmd.OfAsync.either
+                    Api.swateApiv1.GetCurrentRegistrationPeriod
+                    ()
+                    (fun x -> sprintf "Status: %s" x.status |> Dev.LogResults |> DevMsg)
+                    (Dev.LogError >> DevMsg)
+            currentModel, cmd
+        | GetAllOntologiesResponse (newOntologolies) ->
+            let nextModel = {
+                currentModel with
+                    PersistentStorage = { currentModel.PersistentStorage with AllOntologies = newOntologolies }
             }
             nextModel, Cmd.none
 
@@ -119,6 +137,9 @@ let update (msg: Msg) (currentModel: Model): Model * Cmd<Msg> =
             currentModel with
                 DevState = m
         }
+        nextModel, cmd
+    | SwateDBMsg msg ->
+        let nextModel, cmd = SwateDB.update msg currentModel
         nextModel, cmd
     | WordInteropMsg msg ->
         let m, cmd = WordInterop.update msg currentModel.WordInteropModel

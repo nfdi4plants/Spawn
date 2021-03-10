@@ -22,9 +22,6 @@ let init _ : Model * Cmd<Msg> =
         ActivePage          = None
         HomeModel           = Model.Home.Model.init()
         WordInteropModel    = Model.WordInterop.Model.init()
-        //
-        Todos               = []
-        Input               = ""
     }
     let cmd1 =
         Cmd.OfAsync.perform
@@ -38,7 +35,7 @@ let init _ : Model * Cmd<Msg> =
             initializeAddIn
             ()
             ( fun x -> Dev.Msg.LogResults (sprintf "Established connection to word successfully: %A,%A" x.host x.platform) |> DevMsg ) 
-            (Dev.Msg.LogError >> DevMsg)
+            ( Dev.Msg.LogError >> DevMsg )
     let route = Routing.Routing.parsePath Browser.Dom.document.location
     let model, initialCmd = urlUpdate route initialModel
     model, Cmd.batch [cmd1;cmd2; initialCmd]
@@ -60,7 +57,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
 
     | Some Routing.Route.WordInterop ->
         BaseView.baseViewComponent model dispatch [
-            WordInterop.view <| {Model = model; Dispatch = (WordInteropMsg >> dispatch)}
+            WordInterop.view <| {Model = model; Dispatch = dispatch}
         ][
             str ""
         ]

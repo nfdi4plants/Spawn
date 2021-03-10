@@ -81,10 +81,12 @@ type SiteStyleState = {
     }
 
 type PersistentStorage = {
-    AppVersion: string
+    AppVersion          : string
+    AllOntologies       : Shared.SwateTypes.DbDomain.Ontology []
 } with
     static member init() = {
-        AppVersion = ""
+        AppVersion      = ""
+        AllOntologies   = [||]
     }
 
 module WordInterop =
@@ -110,15 +112,15 @@ module Home =
                 Debug = None
             }
 
+
+
 type Model = {
     SiteStyleState          : SiteStyleState
     DevState                : DevState
     PersistentStorage       : PersistentStorage
-    Todos                   : Todo list
-    Input                   : string
     ActivePage              : Routing.Route option
     // Subpage models
     HomeModel               : Home.Model
     WordInteropModel        : WordInterop.Model
-}
+} 
 

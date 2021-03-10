@@ -189,7 +189,7 @@ let navbarComponent (model : Model) (dispatch : Msg -> unit) =
     Navbar.navbar [Navbar.Props [Props.Role "navigation"; AriaLabel "main navigation" ; WordColors.colorElement model.SiteStyleState.ColorMode]] [
         Navbar.Brand.a [] [
             Navbar.Item.a [Navbar.Item.Props [Props.Href "https://csb.bio.uni-kl.de/"; Target "_Blank"; Style [Width "100px"]]] [
-                img [Props.Src @"assets\Swate_logo_for_excel.svg"]
+                img [Props.Src @"assets\Spawn_logo_for_word_mint.svg"] //Spawn_logo_for_word
             ]
 
             quickAccessListElement model dispatch
