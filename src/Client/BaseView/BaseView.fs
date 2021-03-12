@@ -47,7 +47,7 @@ let tabRow (model:Model) dispatch (tabs: seq<ReactElement>)=
 
 let firstRowTabs (model:Model) dispatch =
     tabRow model dispatch [
-        createNavigationTab Routing.Route.WordInterop   model dispatch
+        createNavigationTab Routing.Route.Process       model dispatch
         createNavigationTab Routing.Route.Info          model dispatch
         createNavigationTab Routing.Route.ActivityLog   model dispatch
     ]

@@ -26,13 +26,13 @@ type ShortCutIcon = {
 let shortCutIconList model =
     [
         //ShortCutIcon.create
-        //    "Add Annotation Table"
+        //    "Add Building Block"
         //    [
         //        Fa.span [Fa.Solid.Plus][]
         //        Fa.span [Fa.Solid.Table][]
         //    ]
-        //    (CreateAnnotationTable (model.SiteStyleState.IsDarkMode) |> ExcelInterop)
-        //    "Table"
+        //    (Process.CreateNewBuildingBlock)
+        //    "Building Block"
         //ShortCutIcon.create
         //    "Autoformat Table"
         //    [

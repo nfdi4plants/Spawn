@@ -17,25 +17,27 @@ let init _ : Model * Cmd<Msg> =
     let initialModel = {
         SiteStyleState      = SiteStyleState.init()
         DevState            = DevState.init()
+        ///Debouncing
+        DebouncerState      = Thoth.Elmish.Debouncer.create ()
         PersistentStorage   = PersistentStorage.init()
         // subpage models
         ActivePage          = None
         HomeModel           = Model.Home.Model.init()
-        WordInteropModel    = Model.WordInterop.Model.init()
+        ProcessModel        = Model.Process.Model.init()
     }
     let cmd1 =
         Cmd.OfAsync.perform
             Api.serviceApiv1.getAppVersion
             ()
             ( fun version -> Batch [
-                Dev.Msg.LogResults (sprintf "Retrieved app version from server successfully.") |> DevMsg
+                Dev.Msg.GenericResults (sprintf "Retrieved app version from server successfully.") |> DevMsg
                 UpdateAppVersion version ] )
     let cmd2 =
         Cmd.OfPromise.either
             initializeAddIn
             ()
-            ( fun x -> Dev.Msg.LogResults (sprintf "Established connection to word successfully: %A,%A" x.host x.platform) |> DevMsg ) 
-            ( Dev.Msg.LogError >> DevMsg )
+            ( fun x -> Dev.Msg.GenericResults (sprintf "Established connection to word successfully: %A,%A" x.host x.platform) |> DevMsg ) 
+            ( Dev.Msg.GenericError >> DevMsg )
     let route = Routing.Routing.parsePath Browser.Dom.document.location
     let model, initialCmd = urlUpdate route initialModel
     model, Cmd.batch [cmd1;cmd2; initialCmd]
@@ -55,9 +57,9 @@ let view (model : Model) (dispatch : Msg -> unit) =
             str ""
         ]
 
-    | Some Routing.Route.WordInterop ->
+    | Some Routing.Route.Process ->
         BaseView.baseViewComponent model dispatch [
-            WordInterop.view <| {Model = model; Dispatch = dispatch}
+            Process.view <| {Model = model; Dispatch = dispatch}
         ][
             str ""
         ]

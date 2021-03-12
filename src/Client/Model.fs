@@ -89,15 +89,70 @@ type PersistentStorage = {
         AllOntologies   = [||]
     }
 
-module WordInterop =
+open Shared.SwateTypes
+open Thoth.Elmish
+
+type TermSearchType =
+| TermSearchHeader
+| TermSearchValues
+| TermSearchUnit
+    member this.toInputPlaceholderText =
+        match this with
+        | TermSearchHeader  -> "Search term for header .."
+        | TermSearchValues  -> "Search term for value .."
+        | TermSearchUnit    -> "Search term for unit .."
+    member this.toStrReadable =
+        match this with
+        | TermSearchHeader  -> "header"
+        | TermSearchValues  -> "values"
+        | TermSearchUnit    -> "unit"
+
+type TermSearchState = {
+
+    TermSearchText          : string
+
+    SelectedTerm            : DbDomain.Term option
+    TermSuggestions         : DbDomain.Term []
+
+    ParentOntology          : OntologyInfo option
+    SearchByParentOntology  : bool
+
+    HasSuggestionsLoading   : bool
+    ShowSuggestions         : bool
+
+} with
+    static member init () = {
+        TermSearchText              = ""
+        SelectedTerm                = None
+        TermSuggestions             = [||]
+        ParentOntology              = None
+        SearchByParentOntology      = true
+        HasSuggestionsLoading       = false
+        ShowSuggestions             = false
+    }
+
+type BuildingBlockInfoState = {
+    Id      : int
+    Header  : TermSearchState
+    Unit    : TermSearchState
+    Values  : TermSearchState
+} with
+    static member init (?id) = {
+        Id      = if id.IsSome then id.Value else 0
+        Header  = TermSearchState.init()
+        Unit    = TermSearchState.init()
+        Values  = TermSearchState.init()
+    }
+
+module Process =
 
     type Model = {
-        Loading: bool
-        Debug: string option
+        Loading                 : bool
+        BuildingBlockInfos      : BuildingBlockInfoState list
     } with
         static member init() = {
-            Loading = false
-            Debug = None
+            Loading             = false
+            BuildingBlockInfos  = []
         }
 
 module Home =
@@ -112,15 +167,15 @@ module Home =
                 Debug = None
             }
 
-
-
 type Model = {
     SiteStyleState          : SiteStyleState
     DevState                : DevState
+    ///Debouncing
+    DebouncerState          : Debouncer.State
     PersistentStorage       : PersistentStorage
     ActivePage              : Routing.Route option
     // Subpage models
     HomeModel               : Home.Model
-    WordInteropModel        : WordInterop.Model
+    ProcessModel            : Process.Model
 } 
 

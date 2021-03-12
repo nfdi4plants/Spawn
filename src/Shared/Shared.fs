@@ -174,10 +174,6 @@ module SwateTypes =
 
 open SwateTypes
 
-type Status = {
-    status: string
-}
-
 type ISwateAPI = {
     // Development
     getTestNumber               : unit                                                  -> Async<int>
@@ -206,6 +202,4 @@ type ISwateAPI = {
     getProtocolsByName              : string []                 -> Async<ProtocolTemplate []>
     getProtocolXmlForProtocol       : ProtocolTemplate          -> Async<ProtocolTemplate>
     increaseTimesUsed               : string                    -> Async<unit>
-
-    GetCurrentRegistrationPeriod    : unit                      -> Async<Status>
 }

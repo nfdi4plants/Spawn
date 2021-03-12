@@ -2,6 +2,7 @@ source https://api.nuget.org/v3/index.json
 framework: netcoreapp3.1
 storage: none
 
+nuget Fable.Remoting.DotnetClient 3.12.0
 nuget Fable.Remoting.Giraffe
 nuget Saturn
 nuget Expecto
@@ -23,4 +24,3 @@ nuget Fulma.Extensions.Wikiki.Tooltip
 nuget Fulma.Extensions.Wikiki.Switch
 nuget Thoth.Elmish.Debouncer
 nuget ISADotNet.Fable
-

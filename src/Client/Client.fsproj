@@ -15,13 +15,15 @@
         <Compile Include="OfficeJS.fs" />
         <Compile Include="Model.fs" />
         <Compile Include="Messages.fs" />
+        <Compile Include="CustomComponents\ResponsiveFA.fs" />
+        <Compile Include="CustomComponents\AutocompleteSearch.fs" />
         <Compile Include="CustomComponents\SubModuleBox.fs" />
         <Compile Include="CustomComponents\ErrorModal.fs" />
         <Compile Include="CustomComponents\Navbar.fs" />
         <Compile Include="SubpageTemplate.fs" />
         <Compile Include="OfficeInterop\OfficeInterop.fs" />
         <Compile Include="Home\Home.fs" />
-        <Compile Include="WordInterop\WordInterop.fs" />
+        <Compile Include="Process\Process.fs" />
         <Compile Include="ActivityLog\ActivityLog.fs" />
         <Compile Include="Info\Info.fs" />
         <Compile Include="BaseView\BaseView.fs" />

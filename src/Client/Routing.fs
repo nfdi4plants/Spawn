@@ -7,7 +7,7 @@ open Fulma.Extensions.Wikiki
 
 type Route =
 | Home
-| WordInterop
+| Process
 | ActivityLog
 | Info
 
@@ -15,13 +15,13 @@ type Route =
         match this with
         | Route.Home        -> "/"
         | Route.ActivityLog -> "/ActivityLog"
-        | Route.WordInterop -> "/WordInterop"
+        | Route.Process     -> "/Process"
         | Route.Info        -> "/Info"
 
     member this.toStringRdbl =
         match this with
         | Route.Home                -> ""
-        | Route.WordInterop         -> "Word Interop"
+        | Route.Process             -> "Create Process"
         | Route.ActivityLog         -> "Activity Log"
         | Route.Info                -> "Info"
 
@@ -37,7 +37,7 @@ type Route =
 
         match p with
         | Route.Home                -> createElem [Fa.Solid.Home                ]   (p.toStringRdbl)
-        | Route.WordInterop         -> createElem [Fa.Solid.FileWord            ]   (p.toStringRdbl)
+        | Route.Process             -> createElem [Fa.Solid.FileWord            ]   (p.toStringRdbl)
         | Route.ActivityLog         -> createElem [Fa.Solid.History             ]   (p.toStringRdbl)
         | Route.Info                -> createElem [Fa.Solid.Question            ]   (p.toStringRdbl)
 
@@ -51,7 +51,7 @@ module Routing =
     let route =
         oneOf [
             map Route.Home          (s ""               )
-            map Route.WordInterop   (s "WordInterop"    )
+            map Route.Process       (s "Process"    )
             map Route.ActivityLog   (s "ActivityLog"    )
             map Route.Info          (s "Info"           )
         ]
