@@ -17,9 +17,9 @@ type Route =
         match this with
         | Route.Home        -> "/"
         | Route.Comment     -> "/Comment"
+        | Route.Process     -> "/Process"
         | Route.ActivityLog -> "/ActivityLog"
         | Route.Settings    -> "/Settings"
-        | Route.Process     -> "/Process"
         | Route.Info        -> "/Info"
 
     member this.toStringRdbl =
@@ -60,8 +60,8 @@ module Routing =
         oneOf [
             map Route.Home          (s ""               )
             map Route.Comment       (s "Comment"        )
-            map Route.Settings      (s "Settings"       )  
             map Route.Process       (s "Process"        )
+            map Route.Settings      (s "Settings"       )  
             map Route.ActivityLog   (s "ActivityLog"    )
             map Route.Info          (s "Info"           )
         ]

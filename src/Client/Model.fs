@@ -171,13 +171,11 @@ module Process =
 module Comment =
 
     type Model = {
-        Loading: bool
-        Debug: string option
+        BuildingBlockInfo: BuildingBlockInfoState
     }
         with
             static member init() = {
-                Loading = false
-                Debug = None
+                BuildingBlockInfo = BuildingBlockInfoState.init()
             }
 
 module Home =

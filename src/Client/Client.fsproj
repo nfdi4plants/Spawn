@@ -18,6 +18,7 @@
         <Compile Include="CustomComponents\ResponsiveFA.fs" />
         <Compile Include="CustomComponents\AutocompleteSearch.fs" />
         <Compile Include="CustomComponents\SubModuleBox.fs" />
+        <Compile Include="CustomComponents\BuildingBlockInputEle.fs" />
         <Compile Include="CustomComponents\ErrorModal.fs" />
         <Compile Include="CustomComponents\Navbar.fs" />
         <Compile Include="OfficeInterop\OfficeInterop.fs" />

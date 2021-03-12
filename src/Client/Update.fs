@@ -117,11 +117,11 @@ module TermSearch =
 
     let update (incomingMsg:TermSearch.Msg) (currentModel: Model.Model): Model.Model * Cmd<Messages.Msg> =
         match incomingMsg with
-        | SearchTermTextChange (queryString, id, termType) ->
+        | SearchTermTextChange (queryString, termType) ->
 
             let triggerNewSearch = queryString.Length > 2
-            let currentState = findRelatedTermSearchState currentModel id termType
-            let parentChildStateOpt = tryFindParentChildTermSearchState currentModel id termType
+            let currentState = findRelatedTermSearchState currentModel termType
+            let parentChildStateOpt = tryFindParentChildTermSearchState currentModel termType
 
             let (delay, bounceId, msgToBounce) =
                 (System.TimeSpan.FromSeconds 0.5),
@@ -132,11 +132,11 @@ module TermSearch =
                         | true, Some parentChildState ->
                             if parentChildState.TermSearchText <> "" then
                                 let ontInfo = SwateTypes.OntologyInfo.create parentChildState.TermSearchText (if parentChildState.SelectedTerm.IsSome then parentChildState.SelectedTerm.Value.Accession else "")
-                                (queryString, ontInfo, id, termType) |> (GetTermSuggestionsByParentTerm >> TermSearchMsg)
+                                (queryString, ontInfo, termType) |> (GetTermSuggestionsByParentTerm >> TermSearchMsg)
                             else
-                                (queryString, id, termType)  |> (GetTermSuggestions >> TermSearchMsg)
+                                (queryString, termType)  |> (GetTermSuggestions >> TermSearchMsg)
                         | _, _ ->
-                            (queryString, id, termType)  |> (GetTermSuggestions >> TermSearchMsg)
+                            (queryString, termType)  |> (GetTermSuggestions >> TermSearchMsg)
                     else
                         DoNothing
                 )
@@ -149,83 +149,83 @@ module TermSearch =
                         ShowSuggestions = triggerNewSearch
                         HasSuggestionsLoading = true
                 }
-                updateRelatedTermSearchState currentModel id termType nextState
+                updateRelatedTermSearchState currentModel termType nextState
 
             nextModel, ((delay, bounceId, msgToBounce) |> Bounce |> Cmd.ofMsg)
 
-        | TermSuggestionUsed (selectedTerm, id, termType) ->
+        | TermSuggestionUsed (selectedTerm, termType) ->
             let nextModel =
                 let nextState = {
                     TermSearchState.init() with
                         SelectedTerm    = Some selectedTerm
                         TermSearchText  = selectedTerm.Name
                 }
-                updateRelatedTermSearchState currentModel id termType nextState
+                updateRelatedTermSearchState currentModel termType nextState
             nextModel, Cmd.none
 
-        | UpdateSearchByParentChildOntology (b, id, termType) ->
+        | UpdateSearchByParentChildOntology (b, termType) ->
             let nextModel =
-                let currentState = findRelatedTermSearchState currentModel id termType
+                let currentState = findRelatedTermSearchState currentModel termType
                 let nextState = {
                     currentState with
                         SearchByParentChildOntology = b
                 }
-                updateRelatedTermSearchState currentModel id termType nextState
+                updateRelatedTermSearchState currentModel termType nextState
             nextModel, Cmd.none
         // Server
-        | GetTermSuggestions (queryString, id, termType) ->
+        | GetTermSuggestions (queryString, termType) ->
             let cmd = 
                 Cmd.OfAsync.either
                     Api.swateApiv1.getTermSuggestions
                     (5,queryString)
                     (fun searchRes ->
                         Msg.Batch [
-                            Dev.GenericInfo (sprintf "Requesting Terms for column %i-%s: \"%s\"" id termType.toStrReadable queryString) |> DevMsg
-                            GetTermSuggestionsResponse (searchRes, id, termType) |> TermSearchMsg
+                            Dev.GenericInfo (sprintf "Requesting Terms for column %s: \"%s\"" termType.toStrReadable queryString) |> DevMsg
+                            GetTermSuggestionsResponse (searchRes, termType) |> TermSearchMsg
                         ]
                     )
                     (Dev.GenericError >> DevMsg)
             currentModel, cmd
 
-        | GetTermSuggestionsByParentTerm (queryString, ontInfo, id, termType) ->
+        | GetTermSuggestionsByParentTerm (queryString, ontInfo, termType) ->
             let cmd = 
                 Cmd.OfAsync.either
                     Api.swateApiv1.getTermSuggestionsByParentTerm
                     (5,queryString,ontInfo)
                     (fun searchRes ->
                         Msg.Batch [
-                            Dev.GenericInfo (sprintf "Requesting Terms (parent:%s) for column %i-%s: \"%s\"" ontInfo.Name id termType.toStrReadable queryString) |> DevMsg
-                            GetTermSuggestionsResponse (searchRes, id, termType) |> TermSearchMsg
+                            Dev.GenericInfo (sprintf "Requesting Terms (parent:%s) for column %s: \"%s\"" ontInfo.Name termType.toStrReadable queryString) |> DevMsg
+                            GetTermSuggestionsResponse (searchRes, termType) |> TermSearchMsg
                         ]
                     )
                     (Dev.GenericError >> DevMsg)
             currentModel, cmd
 
-        | GetAllTermsByParentTerm (ontInfo, id, termType) ->
+        | GetAllTermsByParentTerm (ontInfo, termType) ->
             let cmd = 
                 Cmd.OfAsync.either
                     Api.swateApiv1.getAllTermsByParentTerm
                     ontInfo
                     (fun searchRes ->
                         Msg.Batch [
-                            Dev.GenericInfo (sprintf "Requesting all Terms (parent:%s) for column %i-%s" ontInfo.Name id termType.toStrReadable) |> DevMsg
-                            GetTermSuggestionsResponse (searchRes, id, termType) |> TermSearchMsg
+                            Dev.GenericInfo (sprintf "Requesting all Terms (parent:%s) for column %s" ontInfo.Name termType.toStrReadable) |> DevMsg
+                            GetTermSuggestionsResponse (searchRes, termType) |> TermSearchMsg
                         ]
                     )
                     (Dev.GenericError >> DevMsg)
             currentModel, cmd
 
-        | GetTermSuggestionsResponse (suggestions, id, termType) ->
-            let msg = Dev.GenericResults (sprintf "Returning search results for column %i-%s: %i" id termType.toStrReadable suggestions.Length) |> DevMsg
+        | GetTermSuggestionsResponse (suggestions, termType) ->
+            let msg = Dev.GenericResults (sprintf "Returning search results for column %s: %i" termType.toStrReadable suggestions.Length) |> DevMsg
             let nextModel =
-                let currentState = findRelatedTermSearchState currentModel id termType
+                let currentState = findRelatedTermSearchState currentModel termType
                 let nextState = {
                     currentState with
                         TermSuggestions = suggestions
                         ShowSuggestions = true
                         HasSuggestionsLoading = false
                 }
-                updateRelatedTermSearchState currentModel id termType nextState
+                updateRelatedTermSearchState currentModel termType nextState
             nextModel, Cmd.ofMsg msg
 
 let update (msg: Msg) (currentModel: Model): Model * Cmd<Msg> =

@@ -50,8 +50,6 @@ type AutocompleteParameters = {
     ModalId                 : string
     InputId                 : string
     /// This field relates the AutocompleteParameters to a given TermSearchState
-    IterationId             : int
-    /// This field relates the AutocompleteParameters to a given TermSearchState
     TermSearchType          : Model.TermSearchType
 
     QueryString             : string
@@ -67,11 +65,10 @@ type AutocompleteParameters = {
     AdvancedSearchLinkText  : string
     OnAdvancedSearch        : unit//(DbDomain.Term -> Msg)
 } with
-    static member ofTermSearchState (state:TermSearchState) (termType:TermSearchType) (id:int): AutocompleteParameters = {
-        ModalId                 = sprintf "TermSearch_%A_%i" termType id
-        InputId                 = sprintf "TermSearchInput_%A_%i" termType id
+    static member ofTermSearchState (state:TermSearchState) (termType:TermSearchType): AutocompleteParameters = {
+        ModalId                 = sprintf "TermSearch_%A" termType
+        InputId                 = sprintf "TermSearchInput_%A" termType
         TermSearchType          = termType
-        IterationId             = id
 
         QueryString             = state.TermSearchText
         Suggestions             = state.TermSuggestions |> Array.map AutocompleteSuggestion.ofTerm
@@ -80,8 +77,8 @@ type AutocompleteParameters = {
         DropDownIsVisible       = state.ShowSuggestions
         DropDownIsLoading       = state.HasSuggestionsLoading
 
-        OnInputChangeMsg        = fun queryStr -> TermSearch.SearchTermTextChange (queryStr,id, termType) |> TermSearchMsg 
-        OnSuggestionSelect      = fun (term:DbDomain.Term) -> TermSearch.TermSuggestionUsed (term, id, termType) |> TermSearchMsg
+        OnInputChangeMsg        = fun queryStr -> TermSearch.SearchTermTextChange (queryStr, termType) |> TermSearchMsg 
+        OnSuggestionSelect      = fun (term:DbDomain.Term) -> TermSearch.TermSuggestionUsed (term, termType) |> TermSearchMsg
 
         HasAdvancedSearch       = true
         AdvancedSearchLinkText  = "Cant find the Term you are looking for?"
@@ -224,15 +221,15 @@ let autocompleteTermSearchComponent
             Input.Props [
                 Style [BorderColor WordColors.Colorfull.gray40]
                 OnDoubleClick (fun e ->
-                    let currentState        = TermSearch.findRelatedTermSearchState model autocompleteParams.IterationId autocompleteParams.TermSearchType
-                    let parentChildState    = TermSearch.tryFindParentChildTermSearchState model autocompleteParams.IterationId autocompleteParams.TermSearchType
+                    let currentState        = TermSearch.findRelatedTermSearchState model autocompleteParams.TermSearchType
+                    let parentChildState    = TermSearch.tryFindParentChildTermSearchState model autocompleteParams.TermSearchType
                     if parentChildState.IsSome && parentChildState.Value.TermSearchText <> "" && currentState.TermSearchText = "" then
                         let parentOntInfo =
                             if parentChildState.Value.SelectedTerm.IsSome then
                                 parentChildState.Value.SelectedTerm.Value
                                 |> fun parentOnt -> { Name = parentOnt.Name; TermAccession = parentOnt.Accession }
                             else {Name = parentChildState.Value.TermSearchText; TermAccession = "" }
-                        TermSearch.GetAllTermsByParentTerm (parentOntInfo,autocompleteParams.IterationId,autocompleteParams.TermSearchType) |> TermSearchMsg |> dispatch
+                        TermSearch.GetAllTermsByParentTerm (parentOntInfo, autocompleteParams.TermSearchType) |> TermSearchMsg |> dispatch
                     else
                         let v = Browser.Dom.document.getElementById autocompleteParams.InputId
                         v?value |> autocompleteParams.OnInputChangeMsg |> dispatch

@@ -73,14 +73,14 @@ let view (model : Model) (dispatch : Msg -> unit) =
             str ""
         ]
 
-    | Some Routing.Route.Comment ->
+    | Some Routing.Route.Process ->
         BaseView.baseViewComponent model dispatch [
             Process.view <| {Model = model; Dispatch = dispatch}
         ][
             str ""
         ]
 
-    | Some Routing.Route.Process ->
+    | Some Routing.Route.Comment ->
         BaseView.baseViewComponent model dispatch [
             Comment.view <| {Model = model; Dispatch = dispatch}
         ][

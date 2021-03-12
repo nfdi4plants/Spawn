@@ -34,8 +34,8 @@ module TermSearch =
 
     /// This is used to find the correct TermSearchState in the currentModel.
     /// This is necessary as there are multiple building block infos, each with 3 TermSearchStates
-    let findRelatedTermSearchState currentModel (id:int) (termType:TermSearchType) =
-        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
+    let findRelatedTermSearchState currentModel (termType:TermSearchType) =
+        let currentInfo = currentModel.CommentModel.BuildingBlockInfo
         let currentState =
             match termType with
             | TermSearchHeader  -> currentInfo.Header
@@ -43,8 +43,8 @@ module TermSearch =
             | TermSearchUnit    -> currentInfo.Unit
         currentState
 
-    let tryFindParentChildTermSearchState currentModel (id:int) (termType:TermSearchType) =
-        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
+    let tryFindParentChildTermSearchState currentModel (termType:TermSearchType) =
+        let currentInfo = currentModel.CommentModel.BuildingBlockInfo
         let currentState =
             match termType with
             | TermSearchHeader  -> Some currentInfo.Values
@@ -52,42 +52,39 @@ module TermSearch =
             | TermSearchUnit    -> None
         currentState
 
-    let updateRelatedTermSearchState currentModel (id:int) (termType:TermSearchType) (nextState:TermSearchState) =
-        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
-        let nextInfo =
+    let updateRelatedTermSearchState currentModel (termType:TermSearchType) (nextState:TermSearchState) =
+        let currentInfo = currentModel.CommentModel.BuildingBlockInfo
+        let nextInfoState =
             match termType with
             | TermSearchHeader  -> {currentInfo with Header = nextState}
             | TermSearchValues  -> {currentInfo with Values = nextState}
             | TermSearchUnit    -> {currentInfo with Unit = nextState}
-        let nextInfos =
-            currentModel.ProcessModel.BuildingBlockInfos |> List.map (fun currentInfo -> if currentInfo.Id = id then nextInfo else currentInfo)
         let nextModel = {
             currentModel with
-                ProcessModel = { currentModel.ProcessModel with BuildingBlockInfos = nextInfos }
+                CommentModel = { currentModel.CommentModel with BuildingBlockInfo = nextInfoState }
         }
         nextModel
 
     type Msg =
-        | SearchTermTextChange                      of queryString:string * buildingBlockInfoId:int * termType:Model.TermSearchType
-        | TermSuggestionUsed                        of DbDomain.Term * buildingBlockInfoId:int * termType:Model.TermSearchType
-        | UpdateSearchByParentChildOntology         of bool * buildingBlockInfoId:int * termType:Model.TermSearchType
+        | SearchTermTextChange                      of queryString:string * termType:Model.TermSearchType
+        | TermSuggestionUsed                        of DbDomain.Term* termType:Model.TermSearchType
+        | UpdateSearchByParentChildOntology         of bool * termType:Model.TermSearchType
         // Server
-        | GetTermSuggestions                        of queryString:string * buildingBlockInfoId:int * termType:Model.TermSearchType
-        | GetTermSuggestionsByParentTerm            of queryString:string * parentTerm:OntologyInfo * buildingBlockInfoId:int * termType:Model.TermSearchType
-        | GetAllTermsByParentTerm                   of parentTerm:OntologyInfo * buildingBlockInfoId:int * termType:Model.TermSearchType
-        | GetTermSuggestionsResponse                of searchResults:SwateTypes.DbDomain.Term [] * buildingBlockInfoId:int * termType:Model.TermSearchType
+        | GetTermSuggestions                        of queryString:string * termType:Model.TermSearchType
+        | GetTermSuggestionsByParentTerm            of queryString:string * parentTerm:OntologyInfo * termType:Model.TermSearchType
+        | GetAllTermsByParentTerm                   of parentTerm:OntologyInfo * termType:Model.TermSearchType
+        | GetTermSuggestionsResponse                of searchResults:SwateTypes.DbDomain.Term [] * termType:Model.TermSearchType
 
 module Process =
 
     type Msg =
     | CreateNewBuildingBlock
     | DeleteBuildingBlock                           of int
-    | CloseSuggestions
 
 module Comment =
 
     type Msg =
-    | UpdateDebug                                   of string option
+    | CloseSuggestions
 
 
 type Msg =

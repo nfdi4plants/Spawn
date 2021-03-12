@@ -72,8 +72,8 @@ let baseViewComponent (model: Model) (dispatch: Msg -> unit) (bodyChildren: Reac
     div [
         Style [MinHeight "100vh"; BackgroundColor model.SiteStyleState.ColorMode.BodyBackground; Color model.SiteStyleState.ColorMode.Text;]
         OnClick (fun e ->
-            if model.ActivePage = Some Routing.Process then
-                Process.CloseSuggestions |> ProcessMsg |> dispatch
+            if model.ActivePage = Some Routing.Comment then
+                Comment.CloseSuggestions |> CommentMsg |> dispatch
             else
                 ()
         )
