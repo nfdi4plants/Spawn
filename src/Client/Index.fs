@@ -39,6 +39,7 @@ let init _ : Model * Cmd<Msg> =
         ActivePage          = None
         HomeModel           = Model.Home.Model.init()
         ProcessModel        = Model.Process.Model.init()
+        CommentModel        = Model.Comment.Model.init()
     }
     let cmd1 =
         Cmd.OfAsync.perform
@@ -72,9 +73,16 @@ let view (model : Model) (dispatch : Msg -> unit) =
             str ""
         ]
 
-    | Some Routing.Route.Process ->
+    | Some Routing.Route.Comment ->
         BaseView.baseViewComponent model dispatch [
             Process.view <| {Model = model; Dispatch = dispatch}
+        ][
+            str ""
+        ]
+
+    | Some Routing.Route.Process ->
+        BaseView.baseViewComponent model dispatch [
+            Comment.view <| {Model = model; Dispatch = dispatch}
         ][
             str ""
         ]

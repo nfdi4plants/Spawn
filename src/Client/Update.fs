@@ -25,6 +25,13 @@ let urlUpdate (route:Route option) (model:Model) =
                 ProcessModel = m
                 ActivePage = Some Routing.Process }
         nextModel, cmd
+    | Some Route.Comment ->
+        let m, cmd = Comment.init()
+        let nextModel =
+            { model with
+                CommentModel = m
+                ActivePage = Some Routing.Comment }
+        nextModel, cmd
     | Some Route.ActivityLog ->
         model, Cmd.none
     | Some Route.Info ->
@@ -305,6 +312,13 @@ let update (msg: Msg) (currentModel: Model): Model * Cmd<Msg> =
         let nextModel = {
             currentModel with
                 ProcessModel = m
+        }
+        nextModel, cmd
+    | CommentMsg msg ->
+        let m, cmd = Comment.update msg currentModel.CommentModel
+        let nextModel = {
+            currentModel with
+                CommentModel = m
         }
         nextModel, cmd
     | DevMsg msg ->

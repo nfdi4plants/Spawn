@@ -7,6 +7,7 @@ open Fulma.Extensions.Wikiki
 
 type Route =
 | Home
+| Comment
 | Process
 | ActivityLog
 | Settings
@@ -15,6 +16,7 @@ type Route =
     member this.toRouteUrl =
         match this with
         | Route.Home        -> "/"
+        | Route.Comment     -> "/Comment"
         | Route.ActivityLog -> "/ActivityLog"
         | Route.Settings    -> "/Settings"
         | Route.Process     -> "/Process"
@@ -23,6 +25,7 @@ type Route =
     member this.toStringRdbl =
         match this with
         | Route.Home                -> ""
+        | Route.Comment             -> "Add Comment"
         | Route.Process             -> "Create Process"
         | Route.ActivityLog         -> "Activity Log"
         | Route.Settings            -> "Settings"
@@ -39,9 +42,10 @@ type Route =
             )
 
         match p with
-        | Route.Settings            -> createElem [Fa.Solid.Cog                 ]   (p.toStringRdbl)
         | Route.Home                -> createElem [Fa.Solid.Home                ]   (p.toStringRdbl)
-        | Route.Process             -> createElem [Fa.Solid.FileWord            ]   (p.toStringRdbl)
+        | Route.Comment             -> createElem [Fa.Solid.CommentAlt          ]   (p.toStringRdbl)
+        | Route.Process             -> createElem [Fa.Solid.FileCode            ]   (p.toStringRdbl)
+        | Route.Settings            -> createElem [Fa.Solid.Cog                 ]   (p.toStringRdbl)
         | Route.ActivityLog         -> createElem [Fa.Solid.History             ]   (p.toStringRdbl)
         | Route.Info                -> createElem [Fa.Solid.Question            ]   (p.toStringRdbl)
 
@@ -55,7 +59,9 @@ module Routing =
     let route =
         oneOf [
             map Route.Home          (s ""               )
-            map Route.Process       (s "Process"    )
+            map Route.Comment       (s "Comment"        )
+            map Route.Settings      (s "Settings"       )  
+            map Route.Process       (s "Process"        )
             map Route.ActivityLog   (s "ActivityLog"    )
             map Route.Info          (s "Info"           )
         ]

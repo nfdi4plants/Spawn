@@ -84,6 +84,11 @@ module Process =
     | DeleteBuildingBlock                           of int
     | CloseSuggestions
 
+module Comment =
+
+    type Msg =
+    | UpdateDebug                                   of string option
+
 
 type Msg =
 | UpdateAppVersion          of string
@@ -99,6 +104,7 @@ type Msg =
 // Submodel-Messages
 | DevMsg                    of Dev.Msg
 | HomeMsg                   of Home.Msg
+| CommentMsg                of Comment.Msg
 | ProcessMsg                of Process.Msg
 | WordInteropMsg            of WordInterop.Msg
 | SwateDBMsg                of SwateDB.Msg

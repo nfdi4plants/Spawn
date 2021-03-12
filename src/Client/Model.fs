@@ -168,6 +168,18 @@ module Process =
             BuildingBlockInfos  = []
         }
 
+module Comment =
+
+    type Model = {
+        Loading: bool
+        Debug: string option
+    }
+        with
+            static member init() = {
+                Loading = false
+                Debug = None
+            }
+
 module Home =
 
     type Model = {
@@ -189,6 +201,7 @@ type Model = {
     ActivePage              : Routing.Route option
     // Subpage models
     HomeModel               : Home.Model
+    CommentModel            : Comment.Model
     ProcessModel            : Process.Model
 } 
 
