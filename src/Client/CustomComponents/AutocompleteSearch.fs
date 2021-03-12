@@ -54,10 +54,10 @@ type AutocompleteParameters = {
 
     QueryString             : string
     Suggestions             : AutocompleteSuggestion []
-    MaxItems                : int
     DropDownIsVisible       : bool
     DropDownIsLoading       : bool
 
+    IsSelectedTerm          : bool
     OnInputChangeMsg        : string -> Msg
     OnSuggestionSelect      : DbDomain.Term -> Msg
 
@@ -72,7 +72,8 @@ type AutocompleteParameters = {
 
         QueryString             = state.TermSearchText
         Suggestions             = state.TermSuggestions |> Array.map AutocompleteSuggestion.ofTerm
-        MaxItems                = 5
+
+        IsSelectedTerm          = state.SelectedTerm.IsSome
         DropDownIsVisible       = state.ShowSuggestions
         DropDownIsLoading       = state.HasSuggestionsLoading
 
@@ -202,7 +203,10 @@ let autocompleteTermSearchComponent
     (autocompleteParams     : AutocompleteParameters)
     (isDisabled:bool)
     = 
-    Control.div [Control.IsExpanded] [
+    Control.div [
+        Control.IsExpanded
+        Control.HasIconRight
+    ] [
         //AdvancedSearch.advancedSearchModal model autocompleteParams.ModalId autocompleteParams.InputId dispatch autocompleteParams.OnAdvancedSearch
         Input.input [
             Input.Props [Style [BorderColor WordColors.Colorfull.gray40]]
@@ -217,6 +221,12 @@ let autocompleteTermSearchComponent
             )
             Input.Id autocompleteParams.InputId  
         ]
+        if autocompleteParams.IsSelectedTerm then
+            Icon.icon [
+                Icon.Size IsSmall; Icon.IsRight
+            ] [
+                Fa.i [ Fa.Solid.Fingerprint ] [ ]
+            ]
         autocompleteDropdownComponent
             dispatch
             colorMode
