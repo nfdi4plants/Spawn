@@ -190,10 +190,20 @@ module ReleaseNoteTasks =
 
         Release.update(ProjectInfo.gitOwner, ProjectInfo.gitName, config)
 
+        Trace.trace "Update Version.fs"
+
         let newRelease = ReleaseNotes.load "RELEASE_NOTES.md"
 
         let releaseDate =
             if newRelease.Date.IsSome then newRelease.Date.Value.ToShortDateString() else "WIP"
+
+        Fake.DotNet.AssemblyInfoFile.createFSharp  "src/Server/Version.fs"
+            [   Fake.DotNet.AssemblyInfo.Title "SPAWN"
+                Fake.DotNet.AssemblyInfo.Version newRelease.AssemblyVersion
+                Fake.DotNet.AssemblyInfo.Metadata ("ReleaseDate",releaseDate)
+            ]
+
+        Trace.trace "Update Version.fs done!"
 
         Trace.trace "Update manifest.xml"
 

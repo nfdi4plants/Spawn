@@ -1,10 +1,8 @@
-### 0.1.0+ec8fb12 (Released 2021-3-12)
+### 0.1.0+eab94b2 (Released 2021-3-12)
 * Additions:
-    * latest commit #ec8fb12
-    * [[#9028b05](https://github.com/nfdi4plants/Spawn/commit/9028b05047db5f1e3df57f1ed9bd4a29688234be)] Merge branch 'master' of https://github.com/nfdi4plants/Spawn
+    * latest commit #eab94b2
     * [[#aca9810](https://github.com/nfdi4plants/Spawn/commit/aca9810d7283a178c75efd9a645d38a7d18adf5e)] Update base web structure :hammer:
     * [[#c63f8ac](https://github.com/nfdi4plants/Spawn/commit/c63f8acf18b1ee79d9bf19802ba17daf78ed83fd)] Update issue templates
-    * [[#455ef08](https://github.com/nfdi4plants/Spawn/commit/455ef08f6b6e2f32076ecac77f6361edbe84787d)] Merge branch 'master' of https://github.com/nfdi4plants/Spawn
     * [[#3cd5fb8](https://github.com/nfdi4plants/Spawn/commit/3cd5fb8ad32a4760c83bb0fe0391efbf3b2837c9)] Finalize minimal structure :sparkles:
     * [[#7cca87c](https://github.com/nfdi4plants/Spawn/commit/7cca87c4a85beb1304756ff0427e99e7e0a5ac27)] Start working on access to SwateDB
     * [[#56fae49](https://github.com/nfdi4plants/Spawn/commit/56fae49a7afa609d046c132d819bd87c35c0e133)] Create scalable building block logic :sparkles:

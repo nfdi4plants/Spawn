@@ -11,7 +11,7 @@ let accessSwateAPIv1 =
     |> Remoting.buildProxy<ISwateAPI>
 
 let serviceApi = {
-    getAppVersion = fun () -> async {return "0.0.1"(*System.AssemblyVersionInformation.AssemblyVersion*)}
+    getAppVersion = fun () -> async {return System.AssemblyVersionInformation.AssemblyVersion}
 }
 
 let swateApi = {

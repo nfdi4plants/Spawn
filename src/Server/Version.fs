@@ -2,12 +2,12 @@
 namespace System
 open System.Reflection
 
-[<assembly: AssemblyTitleAttribute("SWATE")>]
-[<assembly: AssemblyVersionAttribute("0.0.1")>]
-[<assembly: AssemblyMetadataAttribute("ReleaseDate","07/01/2021")>]
+[<assembly: AssemblyTitleAttribute("SPAWN")>]
+[<assembly: AssemblyVersionAttribute("0.1.0")>]
+[<assembly: AssemblyMetadataAttribute("ReleaseDate","12/03/2021")>]
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] AssemblyTitle = "SWATE"
-    let [<Literal>] AssemblyVersion = "0.0.1"
-    let [<Literal>] AssemblyMetadata_ReleaseDate = "07/01/2021"
+    let [<Literal>] AssemblyTitle = "SPAWN"
+    let [<Literal>] AssemblyVersion = "0.1.0"
+    let [<Literal>] AssemblyMetadata_ReleaseDate = "12/03/2021"
