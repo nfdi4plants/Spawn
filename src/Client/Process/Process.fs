@@ -41,6 +41,21 @@ let update (msg : Process.Msg) (currentModel : Model) : Model * Cmd<Messages.Msg
                 BuildingBlockInfos = filterBuildingBlocks
         }
         nextModel, Cmd.none
+    | CloseSuggestions ->
+        let newBuildingBlockInfos =
+            currentModel.BuildingBlockInfos
+            |> List.map (fun bb ->
+                {bb with
+                    Header  = { bb.Header with ShowSuggestions = false; TermSuggestions = [||]}
+                    Values  = { bb.Values with ShowSuggestions = false; TermSuggestions = [||]}
+                    Unit    = { bb.Unit with ShowSuggestions = false; TermSuggestions = [||]}
+                }
+            )
+        let nextModel = {
+            currentModel with
+                BuildingBlockInfos = newBuildingBlockInfos
+        }
+        nextModel, Cmd.none
     //| _ ->
     //    currentModel,Cmd.none
 
@@ -60,18 +75,28 @@ let pageManipulationButtons (model:Model) dispatch =
         ]
     ]
 
-let buildingBlockTermSearchEle (model:Model.Model) dispatch (termSearchState:TermSearchState) (termType:TermSearchType) (id:int)=
+let buildingBlockTermSearchEle (model:Model.Model) dispatch (termSearchState:TermSearchState) (termType:TermSearchType) (id:int) =
+    let parentChildTermStateOpt = Messages.TermSearch.tryFindParentChildTermSearchState model id termType
     Field.div [Field.HasAddons][
+        /// Choose if search is is_a directed
         match termType with
         | TermSearchHeader | TermSearchValues ->
             Control.div [][
                 Button.a [
-                    Button.Color IsDanger
+                    Button.OnClick (fun e ->
+                        TermSearch.UpdateSearchByParentChildOntology (false, id, termType) |> TermSearchMsg |> dispatch
+                    )
+                    if termSearchState.SearchByParentChildOntology |> not then
+                        Button.Color IsDanger
                 ][ Fa.i [Fa.Solid.Times][] ]
             ]
             Control.div [][
                 Button.a [
-                    Button.Color IsSuccess
+                    Button.OnClick (fun e ->
+                        TermSearch.UpdateSearchByParentChildOntology (true, id, termType) |> TermSearchMsg |> dispatch
+                    )
+                    if termSearchState.SearchByParentChildOntology then
+                        Button.Color IsSuccess
                 ][ Fa.i [Fa.Solid.Check][] ]
             ]
         | TermSearchUnit ->
@@ -79,6 +104,13 @@ let buildingBlockTermSearchEle (model:Model.Model) dispatch (termSearchState:Ter
                 Button.a [
                     Button.IsStatic true
                 ][ str "Add unit"]
+            ]
+        /// better visualize if search is is_a directed
+        if parentChildTermStateOpt.IsSome && termSearchState.SearchByParentChildOntology && parentChildTermStateOpt.Value.TermSearchText <> "" then
+            Control.div [][
+                Button.a [
+                    Button.IsStatic true
+                ][ str (sprintf "%s" parentChildTermStateOpt.Value.TermSearchText)]
             ]
         AutocompleteSearch.autocompleteTermSearchComponent
             dispatch

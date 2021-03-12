@@ -104,30 +104,6 @@ module SwateDB =
 
 module TermSearch =
 
-    let findRelatedTermSearchState currentModel (id:int) (termType:TermSearchType) =
-        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
-        let currentState =
-            match termType with
-            | TermSearchHeader  -> currentInfo.Header
-            | TermSearchValues  -> currentInfo.Values
-            | TermSearchUnit    -> currentInfo.Unit
-        currentState
-
-    let updateRelatedTermSearchState currentModel (id:int) (termType:TermSearchType) (nextState:TermSearchState) =
-        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
-        let nextInfo =
-            match termType with
-            | TermSearchHeader  -> {currentInfo with Header = nextState}
-            | TermSearchValues  -> {currentInfo with Values = nextState}
-            | TermSearchUnit    -> {currentInfo with Unit = nextState}
-        let nextInfos =
-            currentModel.ProcessModel.BuildingBlockInfos |> List.map (fun currentInfo -> if currentInfo.Id = id then nextInfo else currentInfo)
-        let nextModel = {
-            currentModel with
-                ProcessModel = { currentModel.ProcessModel with BuildingBlockInfos = nextInfos }
-        }
-        nextModel
-
     open Messages.TermSearch
 
     let update (incomingMsg:TermSearch.Msg) (currentModel: Model.Model): Model.Model * Cmd<Messages.Msg> =
@@ -135,23 +111,28 @@ module TermSearch =
         | SearchTermTextChange (queryString, id, termType) ->
 
             let triggerNewSearch = queryString.Length > 2
-           
+            let currentState = findRelatedTermSearchState currentModel id termType
+            let parentChildStateOpt = tryFindParentChildTermSearchState currentModel id termType
+
             let (delay, bounceId, msgToBounce) =
                 (System.TimeSpan.FromSeconds 0.5),
                 "GetNewTermSuggestions",
                 (
                     if triggerNewSearch then
-                        //match currentState.ParentOntology, currentState.SearchByParentOntology with
-                        //| Some parentOntology, true ->
-                        //    (newTerm,parentOntology) |> (GetNewTermSuggestionsByParentTerm >> Request >> Api)
-                        //| None,_ | _, false ->
-                            (queryString, id, termType)  |> (GetTermSuggestionsRequest >> TermSearchMsg)
+                        match currentState.SearchByParentChildOntology, parentChildStateOpt with
+                        | true, Some parentChildState ->
+                            if parentChildState.TermSearchText <> "" then
+                                let ontInfo = SwateTypes.OntologyInfo.create parentChildState.TermSearchText (if parentChildState.SelectedTerm.IsSome then parentChildState.SelectedTerm.Value.Accession else "")
+                                (queryString, ontInfo, id, termType) |> (GetTermSuggestionsByParentTerm >> TermSearchMsg)
+                            else
+                                (queryString, id, termType)  |> (GetTermSuggestions >> TermSearchMsg)
+                        | _, _ ->
+                            (queryString, id, termType)  |> (GetTermSuggestions >> TermSearchMsg)
                     else
                         DoNothing
                 )
 
             let nextModel =
-                let currentState = findRelatedTermSearchState currentModel id termType
                 let nextState = {
                     currentState with
                         TermSearchText = queryString
@@ -172,8 +153,18 @@ module TermSearch =
                 }
                 updateRelatedTermSearchState currentModel id termType nextState
             nextModel, Cmd.none
+
+        | UpdateSearchByParentChildOntology (b, id, termType) ->
+            let nextModel =
+                let currentState = findRelatedTermSearchState currentModel id termType
+                let nextState = {
+                    currentState with
+                        SearchByParentChildOntology = b
+                }
+                updateRelatedTermSearchState currentModel id termType nextState
+            nextModel, Cmd.none
         // Server
-        | GetTermSuggestionsRequest (queryString, id, termType) ->
+        | GetTermSuggestions (queryString, id, termType) ->
             let cmd = 
                 Cmd.OfAsync.either
                     Api.swateApiv1.getTermSuggestions
@@ -186,6 +177,35 @@ module TermSearch =
                     )
                     (Dev.GenericError >> DevMsg)
             currentModel, cmd
+
+        | GetTermSuggestionsByParentTerm (queryString, ontInfo, id, termType) ->
+            let cmd = 
+                Cmd.OfAsync.either
+                    Api.swateApiv1.getTermSuggestionsByParentTerm
+                    (5,queryString,ontInfo)
+                    (fun searchRes ->
+                        Msg.Batch [
+                            Dev.GenericInfo (sprintf "Requesting Terms (parent:%s) for column %i-%s: \"%s\"" ontInfo.Name id termType.toStrReadable queryString) |> DevMsg
+                            GetTermSuggestionsResponse (searchRes, id, termType) |> TermSearchMsg
+                        ]
+                    )
+                    (Dev.GenericError >> DevMsg)
+            currentModel, cmd
+
+        | GetAllTermsByParentTerm (ontInfo, id, termType) ->
+            let cmd = 
+                Cmd.OfAsync.either
+                    Api.swateApiv1.getAllTermsByParentTerm
+                    ontInfo
+                    (fun searchRes ->
+                        Msg.Batch [
+                            Dev.GenericInfo (sprintf "Requesting all Terms (parent:%s) for column %i-%s" ontInfo.Name id termType.toStrReadable) |> DevMsg
+                            GetTermSuggestionsResponse (searchRes, id, termType) |> TermSearchMsg
+                        ]
+                    )
+                    (Dev.GenericError >> DevMsg)
+            currentModel, cmd
+
         | GetTermSuggestionsResponse (suggestions, id, termType) ->
             let msg = Dev.GenericResults (sprintf "Returning search results for column %i-%s: %i" id termType.toStrReadable suggestions.Length) |> DevMsg
             let nextModel =
@@ -198,7 +218,6 @@ module TermSearch =
                 }
                 updateRelatedTermSearchState currentModel id termType nextState
             nextModel, Cmd.ofMsg msg
-
 
 let update (msg: Msg) (currentModel: Model): Model * Cmd<Msg> =
     match msg with

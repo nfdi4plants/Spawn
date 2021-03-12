@@ -109,24 +109,23 @@ type TermSearchType =
 
 type TermSearchState = {
 
-    TermSearchText          : string
+    TermSearchText                  : string
 
-    SelectedTerm            : DbDomain.Term option
-    TermSuggestions         : DbDomain.Term []
+    SelectedTerm                    : DbDomain.Term option
+    TermSuggestions                 : DbDomain.Term []
 
-    ParentOntology          : OntologyInfo option
-    SearchByParentOntology  : bool
-
-    HasSuggestionsLoading   : bool
-    ShowSuggestions         : bool
+    SearchByParentChildOntology     : bool
+    HasSuggestionsLoading           : bool
+    ShowSuggestions                 : bool
 
 } with
     static member init () = {
         TermSearchText              = ""
+
         SelectedTerm                = None
         TermSuggestions             = [||]
-        ParentOntology              = None
-        SearchByParentOntology      = true
+
+        SearchByParentChildOntology = true
         HasSuggestionsLoading       = false
         ShowSuggestions             = false
     }

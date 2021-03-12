@@ -69,8 +69,13 @@ open Fable.FontAwesome
 /// The base react component for all views in the app. contains the navbar and takes body and footer components to create the full view.
 let baseViewComponent (model: Model) (dispatch: Msg -> unit) (bodyChildren: ReactElement list) (footerChildren: ReactElement list) =
     div [
-        Style [MinHeight "100vh"; BackgroundColor model.SiteStyleState.ColorMode.BodyBackground; Color model.SiteStyleState.ColorMode.Text;
-    ]
+        Style [MinHeight "100vh"; BackgroundColor model.SiteStyleState.ColorMode.BodyBackground; Color model.SiteStyleState.ColorMode.Text;]
+        OnClick (fun e ->
+            if model.ActivePage = Some Routing.Process then
+                Process.CloseSuggestions |> ProcessMsg |> dispatch
+            else
+                ()
+        )
     ] [
         Navbar.navbarComponent model dispatch
         Container.container [

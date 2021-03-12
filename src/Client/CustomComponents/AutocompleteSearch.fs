@@ -46,11 +46,13 @@ with
     }
 
        
-
 type AutocompleteParameters = {
-    TermSearchType          : Model.TermSearchType
     ModalId                 : string
     InputId                 : string
+    /// This field relates the AutocompleteParameters to a given TermSearchState
+    IterationId             : int
+    /// This field relates the AutocompleteParameters to a given TermSearchState
+    TermSearchType          : Model.TermSearchType
 
     QueryString             : string
     Suggestions             : AutocompleteSuggestion []
@@ -66,9 +68,10 @@ type AutocompleteParameters = {
     OnAdvancedSearch        : unit//(DbDomain.Term -> Msg)
 } with
     static member ofTermSearchState (state:TermSearchState) (termType:TermSearchType) (id:int): AutocompleteParameters = {
-        TermSearchType          = termType
         ModalId                 = sprintf "TermSearch_%A_%i" termType id
         InputId                 = sprintf "TermSearchInput_%A_%i" termType id
+        TermSearchType          = termType
+        IterationId             = id
 
         QueryString             = state.TermSearchText
         Suggestions             = state.TermSuggestions |> Array.map AutocompleteSuggestion.ofTerm
@@ -209,7 +212,6 @@ let autocompleteTermSearchComponent
     ] [
         //AdvancedSearch.advancedSearchModal model autocompleteParams.ModalId autocompleteParams.InputId dispatch autocompleteParams.OnAdvancedSearch
         Input.input [
-            Input.Props [Style [BorderColor WordColors.Colorfull.gray40]]
             Input.Disabled isDisabled
             Input.Placeholder inputPlaceholderText
             Input.ValueOrDefault autocompleteParams.QueryString
@@ -219,6 +221,23 @@ let autocompleteTermSearchComponent
             Input.OnChange (
                 fun e -> e.Value |> autocompleteParams.OnInputChangeMsg |> dispatch
             )
+            Input.Props [
+                Style [BorderColor WordColors.Colorfull.gray40]
+                OnDoubleClick (fun e ->
+                    let currentState        = TermSearch.findRelatedTermSearchState model autocompleteParams.IterationId autocompleteParams.TermSearchType
+                    let parentChildState    = TermSearch.tryFindParentChildTermSearchState model autocompleteParams.IterationId autocompleteParams.TermSearchType
+                    if parentChildState.IsSome && parentChildState.Value.TermSearchText <> "" && currentState.TermSearchText = "" then
+                        let parentOntInfo =
+                            if parentChildState.Value.SelectedTerm.IsSome then
+                                parentChildState.Value.SelectedTerm.Value
+                                |> fun parentOnt -> { Name = parentOnt.Name; TermAccession = parentOnt.Accession }
+                            else {Name = parentChildState.Value.TermSearchText; TermAccession = "" }
+                        TermSearch.GetAllTermsByParentTerm (parentOntInfo,autocompleteParams.IterationId,autocompleteParams.TermSearchType) |> TermSearchMsg |> dispatch
+                    else
+                        let v = Browser.Dom.document.getElementById autocompleteParams.InputId
+                        v?value |> autocompleteParams.OnInputChangeMsg |> dispatch
+                )
+            ]
             Input.Id autocompleteParams.InputId  
         ]
         if autocompleteParams.IsSelectedTerm then

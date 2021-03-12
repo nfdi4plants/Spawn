@@ -30,25 +30,59 @@ open Shared.SwateTypes
 
 module TermSearch =
 
+    open Model
+
+    /// This is used to find the correct TermSearchState in the currentModel.
+    /// This is necessary as there are multiple building block infos, each with 3 TermSearchStates
+    let findRelatedTermSearchState currentModel (id:int) (termType:TermSearchType) =
+        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
+        let currentState =
+            match termType with
+            | TermSearchHeader  -> currentInfo.Header
+            | TermSearchValues  -> currentInfo.Values
+            | TermSearchUnit    -> currentInfo.Unit
+        currentState
+
+    let tryFindParentChildTermSearchState currentModel (id:int) (termType:TermSearchType) =
+        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
+        let currentState =
+            match termType with
+            | TermSearchHeader  -> Some currentInfo.Values
+            | TermSearchValues  -> Some currentInfo.Header
+            | TermSearchUnit    -> None
+        currentState
+
+    let updateRelatedTermSearchState currentModel (id:int) (termType:TermSearchType) (nextState:TermSearchState) =
+        let currentInfo = currentModel.ProcessModel.BuildingBlockInfos |> List.find (fun x -> x.Id = id)
+        let nextInfo =
+            match termType with
+            | TermSearchHeader  -> {currentInfo with Header = nextState}
+            | TermSearchValues  -> {currentInfo with Values = nextState}
+            | TermSearchUnit    -> {currentInfo with Unit = nextState}
+        let nextInfos =
+            currentModel.ProcessModel.BuildingBlockInfos |> List.map (fun currentInfo -> if currentInfo.Id = id then nextInfo else currentInfo)
+        let nextModel = {
+            currentModel with
+                ProcessModel = { currentModel.ProcessModel with BuildingBlockInfos = nextInfos }
+        }
+        nextModel
+
     type Msg =
         | SearchTermTextChange                      of queryString:string * buildingBlockInfoId:int * termType:Model.TermSearchType
         | TermSuggestionUsed                        of DbDomain.Term * buildingBlockInfoId:int * termType:Model.TermSearchType
+        | UpdateSearchByParentChildOntology         of bool * buildingBlockInfoId:int * termType:Model.TermSearchType
         // Server
-        | GetTermSuggestionsRequest                 of queryString:string * buildingBlockInfoId:int * termType:Model.TermSearchType
+        | GetTermSuggestions                        of queryString:string * buildingBlockInfoId:int * termType:Model.TermSearchType
+        | GetTermSuggestionsByParentTerm            of queryString:string * parentTerm:OntologyInfo * buildingBlockInfoId:int * termType:Model.TermSearchType
+        | GetAllTermsByParentTerm                   of parentTerm:OntologyInfo * buildingBlockInfoId:int * termType:Model.TermSearchType
         | GetTermSuggestionsResponse                of searchResults:SwateTypes.DbDomain.Term [] * buildingBlockInfoId:int * termType:Model.TermSearchType
-        //| ToggleSearchByParentOntology
-        //| TermSuggestionUsed                    of DbDomain.Term
-        //| NewSuggestions                        of DbDomain.Term []
-        //| StoreParentOntologyFromOfficeInterop  of obj option
-        //// Server
-        //| GetAllTermsByParentTermRequest        of OntologyInfo 
-        //| GetAllTermsByParentTermResponse       of DbDomain.Term []
 
 module Process =
 
     type Msg =
     | CreateNewBuildingBlock
-    | DeleteBuildingBlock   of int
+    | DeleteBuildingBlock                           of int
+    | CloseSuggestions
 
 
 type Msg =
