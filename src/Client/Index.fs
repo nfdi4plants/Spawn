@@ -14,8 +14,23 @@ let initializeAddIn () =
     OfficeInterop.Office.onReady()
 
 let init _ : Model * Cmd<Msg> =
+    let isDarkMode =
+        let cookies = Browser.Dom.document.cookie
+        let cookiesSplit = cookies.Split([|";"|], System.StringSplitOptions.RemoveEmptyEntries)
+        cookiesSplit
+        |> Array.tryFind (fun x -> x.StartsWith (Cookies.IsDarkMode.toCookieString + "="))
+        |> fun cookieOpt ->
+            if cookieOpt.IsSome then
+                cookieOpt.Value.Replace(Cookies.IsDarkMode.toCookieString + "=","")
+                |> fun cookie ->
+                    match cookie with
+                    | "false"| "False"  -> false
+                    | "true" | "True"   -> true
+                    | anyElse -> false
+            else
+                false
     let initialModel = {
-        SiteStyleState      = SiteStyleState.init()
+        SiteStyleState      = SiteStyleState.init(darkMode=isDarkMode)
         DevState            = DevState.init()
         ///Debouncing
         DebouncerState      = Thoth.Elmish.Debouncer.create ()
@@ -67,6 +82,11 @@ let view (model : Model) (dispatch : Msg -> unit) =
     | Some Routing.Route.Info ->
         BaseView.baseViewComponent model dispatch [
             Info.infoComponent model dispatch
+        ][]
+
+    | Some Routing.Route.Settings ->
+        BaseView.baseViewComponent model dispatch [
+            Settings.view <| {Model = model; Dispatch = dispatch}
         ][]
 
     | Some Routing.Route.Home | None ->

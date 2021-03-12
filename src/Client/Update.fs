@@ -29,6 +29,8 @@ let urlUpdate (route:Route option) (model:Model) =
         model, Cmd.none
     | Some Route.Info ->
         model, Cmd.none
+    | Some Route.Settings ->
+        model, Cmd.none
     | None ->
         model, Cmd.ofMsg (exn("Could not find navigated route!") |> Dev.GenericError |> DevMsg )
 
@@ -273,6 +275,17 @@ let update (msg: Msg) (currentModel: Model): Model * Cmd<Msg> =
         let nextSiteStyleState = {
             currentModel.SiteStyleState with
                 BurgerVisible = currentModel.SiteStyleState.BurgerVisible |> not
+        }
+        let nextModel = {
+            currentModel with
+                SiteStyleState = nextSiteStyleState
+        }
+        nextModel, Cmd.none
+    | ToggleColorMode ->
+        let nextSiteStyleState = {
+            currentModel.SiteStyleState with
+                IsDarkMode      = currentModel.SiteStyleState.IsDarkMode |> not
+                ColorMode       = if currentModel.SiteStyleState.IsDarkMode then WordColors.colorfullMode else WordColors.darkMode
         }
         let nextModel = {
             currentModel with

@@ -94,6 +94,7 @@ type Msg =
 | DoNothing
 // Style
 | ToggleNavbarBurger
+| ToggleColorMode
 | UpdateActivePage          of Routing.Route option
 // Submodel-Messages
 | DevMsg                    of Dev.Msg

@@ -2,6 +2,18 @@ module Model
 
 open Shared
 
+type Cookies =
+| IsDarkMode
+
+    member this.toCookieString =
+        match this with
+        | IsDarkMode    -> "isDarkmode"
+
+    static member ofString str =
+        match str with
+        | "isDarkmode"  -> IsDarkMode
+        | anyElse       -> failwith (sprintf "Cookie-Parser encountered unknown cookie name: %s" anyElse)
+
 module Logging =
 
     open Fable.React
@@ -73,11 +85,13 @@ type DevState = {
 
 type SiteStyleState = {
     BurgerVisible   : bool
+    IsDarkMode      : bool
     ColorMode       : WordColors.ColorMode
 } with
-    static member init() = {
+    static member init(?darkMode) = {
         BurgerVisible   = false
-        ColorMode       = WordColors.colorfullMode
+        IsDarkMode      = if darkMode.IsSome then darkMode.Value else false
+        ColorMode       = if darkMode.IsSome && darkMode.Value = true then WordColors.darkMode else WordColors.colorfullMode
     }
 
 type PersistentStorage = {

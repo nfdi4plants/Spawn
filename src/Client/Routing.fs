@@ -9,12 +9,14 @@ type Route =
 | Home
 | Process
 | ActivityLog
+| Settings
 | Info
 
     member this.toRouteUrl =
         match this with
         | Route.Home        -> "/"
         | Route.ActivityLog -> "/ActivityLog"
+        | Route.Settings    -> "/Settings"
         | Route.Process     -> "/Process"
         | Route.Info        -> "/Info"
 
@@ -23,6 +25,7 @@ type Route =
         | Route.Home                -> ""
         | Route.Process             -> "Create Process"
         | Route.ActivityLog         -> "Activity Log"
+        | Route.Settings            -> "Settings"
         | Route.Info                -> "Info"
 
     static member toIcon (p: Route)=
@@ -36,6 +39,7 @@ type Route =
             )
 
         match p with
+        | Route.Settings            -> createElem [Fa.Solid.Cog                 ]   (p.toStringRdbl)
         | Route.Home                -> createElem [Fa.Solid.Home                ]   (p.toStringRdbl)
         | Route.Process             -> createElem [Fa.Solid.FileWord            ]   (p.toStringRdbl)
         | Route.ActivityLog         -> createElem [Fa.Solid.History             ]   (p.toStringRdbl)

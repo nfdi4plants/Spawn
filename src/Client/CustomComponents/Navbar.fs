@@ -217,6 +217,15 @@ let navbarComponent (model : Model) (dispatch : Msg -> unit) =
                     str "Contact"
                 ]
                 Navbar.Item.a [Navbar.Item.Props [
+                    Style [ Color model.SiteStyleState.ColorMode.Text]
+                    OnClick (fun e ->
+                        ToggleNavbarBurger |> dispatch
+                        UpdateActivePage (Some Routing.Settings) |> dispatch
+                    )
+                ]] [
+                    str "Settings"
+                ]
+                Navbar.Item.a [Navbar.Item.Props [
                     Style [ Color model.SiteStyleState.ColorMode.Text];
                     OnClick (fun e ->
                         ToggleNavbarBurger |> dispatch

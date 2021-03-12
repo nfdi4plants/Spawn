@@ -25,6 +25,7 @@
         <Compile Include="Home\Home.fs" />
         <Compile Include="Process\Process.fs" />
         <Compile Include="ActivityLog\ActivityLog.fs" />
+        <Compile Include="Settings\Settings.fs" />
         <Compile Include="Info\Info.fs" />
         <Compile Include="BaseView\BaseView.fs" />
         <Compile Include="Update.fs" />

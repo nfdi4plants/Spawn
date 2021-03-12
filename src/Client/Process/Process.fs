@@ -150,11 +150,12 @@ let buildingBlockInfoEle (model:Model.Model) dispatch (buildingBlockInfo:Buildin
 
 let displayAllBuildingBlocksInfosEle (model:Model.Model) dispatch =
     Container.container [] [
-        for info in model.ProcessModel.BuildingBlockInfos do
-            yield
-                Label.label [Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str (sprintf "Column: %i" info.Id)]
-            yield
-                buildingBlockInfoEle model dispatch info
+        if model.ProcessModel.BuildingBlockInfos.IsEmpty |> not then
+            for info in model.ProcessModel.BuildingBlockInfos do
+                yield
+                    Label.label [Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str (sprintf "Column: %i" info.Id)]
+                yield
+                    buildingBlockInfoEle model dispatch info
     ]
 
 let mainElement (model:Model.Model) dispatch =
@@ -166,13 +167,6 @@ let mainElement (model:Model.Model) dispatch =
 
         displayAllBuildingBlocksInfosEle model dispatch
         
-        //Button.a [
-        //    Button.IsFullWidth
-        //    Button.Color IsInfo
-        //    Button.OnClick (fun e -> SwateDB.GetAllOntologiesRequest |> SwateDBMsg |> dispatch)
-        //][
-        //    str "Get Ontologies"
-        //]
     ]
 
 type Props = {
