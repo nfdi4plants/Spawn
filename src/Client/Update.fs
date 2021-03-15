@@ -47,6 +47,22 @@ module WordInterop =
 
     let update (msg:WordInterop.Msg) (currentModel: Model.Model): Model.Model * Cmd<Messages.Msg> =
         match msg with
+        | GetSelectedTextAsHeader ->
+            let cmd =
+                Cmd.OfPromise.either
+                    OfficeInterop.getSelectedText
+                    ()
+                    (Comment.NewCommentWithHeader >> CommentMsg)
+                    (Messages.Dev.GenericError >> Messages.DevMsg)
+            currentModel, cmd
+        | GetSelectedTextAsValues ->
+            let cmd =
+                Cmd.OfPromise.either
+                    OfficeInterop.getSelectedText
+                    ()
+                    (Comment.NewCommentWithValues >> CommentMsg)
+                    (Messages.Dev.GenericError >> Messages.DevMsg)
+            currentModel, cmd
         | TryWord ->
             let cmd =
                 Cmd.OfPromise.either
@@ -132,7 +148,7 @@ module TermSearch =
                         | true, Some parentChildState ->
                             if parentChildState.TermSearchText <> "" then
                                 let ontInfo = SwateTypes.OntologyInfo.create parentChildState.TermSearchText (if parentChildState.SelectedTerm.IsSome then parentChildState.SelectedTerm.Value.Accession else "")
-                                (queryString, ontInfo, termType) |> (GetTermSuggestionsByParentTerm >> TermSearchMsg)
+                                (queryString, ontInfo, termType) |> (GetTermSuggestionsByParentChildTerm >> TermSearchMsg)
                             else
                                 (queryString, termType)  |> (GetTermSuggestions >> TermSearchMsg)
                         | _, _ ->
@@ -187,28 +203,40 @@ module TermSearch =
                     (Dev.GenericError >> DevMsg)
             currentModel, cmd
 
-        | GetTermSuggestionsByParentTerm (queryString, ontInfo, termType) ->
+        | GetTermSuggestionsByParentChildTerm (queryString, ontInfo, termType) ->
+            let api =
+                match termType with
+                | TermSearchValues -> Api.swateApiv1.getTermSuggestionsByParentTerm
+                | TermSearchHeader -> Api.swateApiv1.getTermSuggestionsByChildTerm
+                /// This might be problematic in the future
+                | _ -> Api.swateApiv1.getTermSuggestionsByParentTerm
             let cmd = 
                 Cmd.OfAsync.either
-                    Api.swateApiv1.getTermSuggestionsByParentTerm
+                    api
                     (5,queryString,ontInfo)
                     (fun searchRes ->
                         Msg.Batch [
-                            Dev.GenericInfo (sprintf "Requesting Terms (parent:%s) for column %s: \"%s\"" ontInfo.Name termType.toStrReadable queryString) |> DevMsg
+                            Dev.GenericInfo (sprintf "Requesting Terms (is_a:%s) for column %s: \"%s\"" ontInfo.Name termType.toStrReadable queryString) |> DevMsg
                             GetTermSuggestionsResponse (searchRes, termType) |> TermSearchMsg
                         ]
                     )
                     (Dev.GenericError >> DevMsg)
             currentModel, cmd
 
-        | GetAllTermsByParentTerm (ontInfo, termType) ->
+        | GetAllTermsByParentChildTerm (ontInfo, termType) ->
+            let api =
+                match termType with
+                | TermSearchValues -> Api.swateApiv1.getAllTermsByParentTerm
+                | TermSearchHeader -> Api.swateApiv1.getAllTermsByChildTerm
+                /// This might be problematic in the future
+                | _ -> Api.swateApiv1.getAllTermsByParentTerm
             let cmd = 
                 Cmd.OfAsync.either
-                    Api.swateApiv1.getAllTermsByParentTerm
+                    api
                     ontInfo
                     (fun searchRes ->
                         Msg.Batch [
-                            Dev.GenericInfo (sprintf "Requesting all Terms (parent:%s) for column %s" ontInfo.Name termType.toStrReadable) |> DevMsg
+                            Dev.GenericInfo (sprintf "Requesting all Terms (is_a:%s) for column %s" ontInfo.Name termType.toStrReadable) |> DevMsg
                             GetTermSuggestionsResponse (searchRes, termType) |> TermSearchMsg
                         ]
                     )

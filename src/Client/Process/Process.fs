@@ -21,26 +21,14 @@ let init () :  Model * Cmd<Msg> =
 let update (msg : Process.Msg) (currentModel : Model) : Model * Cmd<Messages.Msg> =
     match msg with
     | CreateNewBuildingBlock ->
-        let nextID =
-            if currentModel.BuildingBlockInfos.IsEmpty then
-                0
-            else
-                currentModel.BuildingBlockInfos |> List.map (fun x -> x.Id) |> List.max |> (+) 1
-        let newBuildingBlockInfo = Model.BuildingBlockInfoState.init(nextID)
+        let newBuildingBlockInfo = Model.BuildingBlockInfoState.init()
         let nextModel = {
             currentModel with
                 BuildingBlockInfos = newBuildingBlockInfo::currentModel.BuildingBlockInfos
         }
         nextModel, Cmd.none
     | DeleteBuildingBlock id ->
-        let filterBuildingBlocks =
-            let filtered = currentModel.BuildingBlockInfos |> List.filter (fun x -> x.Id <> id)
-            filtered |> List.mapi (fun i x -> {x with Id = filtered.Length - i})
-        let nextModel = {
-            currentModel with
-                BuildingBlockInfos = filterBuildingBlocks
-        }
-        nextModel, Cmd.none
+        currentModel, Cmd.none
 
     //| _ ->
     //    currentModel,Cmd.none

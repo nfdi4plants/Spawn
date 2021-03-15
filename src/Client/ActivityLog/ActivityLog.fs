@@ -15,7 +15,16 @@ open Browser.Types
 //TO-DO: Save log as tab seperated file
 
 let debugBox model dispatch =
-    Box.box' [][
+    Field.div [][
+        Button.a [
+            Button.Color IsInfo
+            Button.IsFullWidth
+            Button.OnClick (fun e ->
+                WordInterop.TryWord |> WordInteropMsg |> dispatch
+            )
+        ][
+            str "Try Word"
+        ]
     ]
 
 let activityLogComponent (model:Model) dispatch =
@@ -23,7 +32,7 @@ let activityLogComponent (model:Model) dispatch =
 
         Label.label [Label.Size IsLarge; Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Activity Log"]
 
-        //debugBox model dispatch
+        debugBox model dispatch
 
         Label.label [Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]] [str "Display all recorded activities of this session."]
         Customcomponents.subModuleBox [

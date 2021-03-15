@@ -221,15 +221,15 @@ let autocompleteTermSearchComponent
             Input.Props [
                 Style [BorderColor WordColors.Colorfull.gray40]
                 OnDoubleClick (fun e ->
-                    let currentState        = TermSearch.findRelatedTermSearchState model autocompleteParams.TermSearchType
-                    let parentChildState    = TermSearch.tryFindParentChildTermSearchState model autocompleteParams.TermSearchType
+                    let currentState = TermSearch.findRelatedTermSearchState model autocompleteParams.TermSearchType
+                    let parentChildState = TermSearch.tryFindParentChildTermSearchState model autocompleteParams.TermSearchType
                     if parentChildState.IsSome && parentChildState.Value.TermSearchText <> "" && currentState.TermSearchText = "" then
                         let parentOntInfo =
                             if parentChildState.Value.SelectedTerm.IsSome then
                                 parentChildState.Value.SelectedTerm.Value
                                 |> fun parentOnt -> { Name = parentOnt.Name; TermAccession = parentOnt.Accession }
                             else {Name = parentChildState.Value.TermSearchText; TermAccession = "" }
-                        TermSearch.GetAllTermsByParentTerm (parentOntInfo, autocompleteParams.TermSearchType) |> TermSearchMsg |> dispatch
+                        TermSearch.GetAllTermsByParentChildTerm (parentOntInfo, autocompleteParams.TermSearchType) |> TermSearchMsg |> dispatch
                     else
                         let v = Browser.Dom.document.getElementById autocompleteParams.InputId
                         v?value |> autocompleteParams.OnInputChangeMsg |> dispatch

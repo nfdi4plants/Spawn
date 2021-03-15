@@ -28,16 +28,32 @@ let consoleLog (message: string): unit = jsNative
 
 let exampleExcelFunction () =
     Word.run(fun context ->
-        let paragraphs = context.document.getSelection().paragraphs
-        let _ = paragraphs.load(propertyNames=U2.Case2(ResizeArray[|"items"|]))
+        let selection = context.document.getSelection()
+        let _ = selection.load(propertyNames=U2.Case2(ResizeArray[|"text"|]))
 
         promise {
 
             let! paras =
                 context.sync().``then``(fun e ->
-                    paragraphs.items.[0].insertText("This is some new Text", InsertLocation.End)
+                    selection.text
                 ) 
 
-            return sprintf "Added custom text successfully." 
+            return sprintf "Selected Text: %s." paras
+        }
+    )
+
+let getSelectedText() =
+    Word.run(fun context ->
+        let selection = context.document.getSelection()
+        let _ = selection.load(propertyNames=U2.Case2(ResizeArray[|"text"|]))
+
+        promise {
+
+            let! selectedText =
+                context.sync().``then``(fun e ->
+                    selection.text
+                ) 
+
+            return selectedText
         }
     )

@@ -29,7 +29,11 @@ let swateApi = {
     /// (nOfReturnedResults*queryString*parentOntology). If parentOntology = "" then isNull -> Error.
     getTermSuggestionsByParentTerm      = fun vals  -> accessSwateAPIv1.getTermSuggestionsByParentTerm vals
     ///
+    getTermSuggestionsByChildTerm      = fun vals  -> accessSwateAPIv1.getTermSuggestionsByChildTerm vals
+    ///
     getAllTermsByParentTerm             = fun vals  -> accessSwateAPIv1.getAllTermsByParentTerm vals
+    ///
+    getAllTermsByChildTerm             = fun vals  -> accessSwateAPIv1.getAllTermsByChildTerm vals
     /// (ontOpt,searchName,mustContainName,searchDefinition,mustContainDefinition,keepObsolete)
     getTermsForAdvancedSearch           = fun vals  -> accessSwateAPIv1.getTermsForAdvancedSearch vals
     

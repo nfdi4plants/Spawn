@@ -10,6 +10,9 @@ module Home =
 module WordInterop =
 
     type Msg =
+    | GetSelectedTextAsHeader
+    | GetSelectedTextAsValues
+    // Dev
     | TryWord
 
 module Dev =
@@ -35,7 +38,7 @@ module TermSearch =
     /// This is used to find the correct TermSearchState in the currentModel.
     /// This is necessary as there are multiple building block infos, each with 3 TermSearchStates
     let findRelatedTermSearchState currentModel (termType:TermSearchType) =
-        let currentInfo = currentModel.CommentModel.BuildingBlockInfo
+        let currentInfo = currentModel.CommentModel.BuildingBlockInfo.Value
         let currentState =
             match termType with
             | TermSearchHeader  -> currentInfo.Header
@@ -44,7 +47,7 @@ module TermSearch =
         currentState
 
     let tryFindParentChildTermSearchState currentModel (termType:TermSearchType) =
-        let currentInfo = currentModel.CommentModel.BuildingBlockInfo
+        let currentInfo = currentModel.CommentModel.BuildingBlockInfo.Value
         let currentState =
             match termType with
             | TermSearchHeader  -> Some currentInfo.Values
@@ -53,7 +56,7 @@ module TermSearch =
         currentState
 
     let updateRelatedTermSearchState currentModel (termType:TermSearchType) (nextState:TermSearchState) =
-        let currentInfo = currentModel.CommentModel.BuildingBlockInfo
+        let currentInfo = currentModel.CommentModel.BuildingBlockInfo.Value
         let nextInfoState =
             match termType with
             | TermSearchHeader  -> {currentInfo with Header = nextState}
@@ -61,7 +64,7 @@ module TermSearch =
             | TermSearchUnit    -> {currentInfo with Unit = nextState}
         let nextModel = {
             currentModel with
-                CommentModel = { currentModel.CommentModel with BuildingBlockInfo = nextInfoState }
+                CommentModel = { currentModel.CommentModel with BuildingBlockInfo = Some nextInfoState }
         }
         nextModel
 
@@ -71,8 +74,10 @@ module TermSearch =
         | UpdateSearchByParentChildOntology         of bool * termType:Model.TermSearchType
         // Server
         | GetTermSuggestions                        of queryString:string * termType:Model.TermSearchType
-        | GetTermSuggestionsByParentTerm            of queryString:string * parentTerm:OntologyInfo * termType:Model.TermSearchType
-        | GetAllTermsByParentTerm                   of parentTerm:OntologyInfo * termType:Model.TermSearchType
+        /// termType determines if search is done is-a directed by parent or by child
+        | GetTermSuggestionsByParentChildTerm       of queryString:string * parentTerm:OntologyInfo * termType:Model.TermSearchType
+        /// termType determines if search is done is-a directed by parent or by child
+        | GetAllTermsByParentChildTerm              of parentTerm:OntologyInfo * termType:Model.TermSearchType
         | GetTermSuggestionsResponse                of searchResults:SwateTypes.DbDomain.Term [] * termType:Model.TermSearchType
 
 module Process =
@@ -84,7 +89,10 @@ module Process =
 module Comment =
 
     type Msg =
+    | NewCommentWithHeader                          of string
+    | NewCommentWithValues                          of string
     | CloseSuggestions
+    | ResetBuildingBlockInfo
 
 
 type Msg =

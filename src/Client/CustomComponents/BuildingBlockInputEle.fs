@@ -59,7 +59,7 @@ let buildingBlockTermSearchEle (model:Model.Model) dispatch (termSearchState:Ter
     ]
 
 let buildingBlockInfoEle (model:Model.Model) dispatch (buildingBlockInfo:BuildingBlockInfoState) =
-    Customcomponents.subModuleBox [
+    Field.div [ ] [
         Label.label [Label.Size IsSmall; Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]][str "Header"]
         buildingBlockTermSearchEle model dispatch buildingBlockInfo.Header TermSearchHeader
         Label.label [Label.Size IsSmall; Label.Props [Style [Color model.SiteStyleState.ColorMode.Accent]]][str "Values"]

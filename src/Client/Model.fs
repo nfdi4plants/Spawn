@@ -145,13 +145,11 @@ type TermSearchState = {
     }
 
 type BuildingBlockInfoState = {
-    Id      : int
     Header  : TermSearchState
     Unit    : TermSearchState
     Values  : TermSearchState
 } with
-    static member init (?id) = {
-        Id      = if id.IsSome then id.Value else 0
+    static member init () = {
         Header  = TermSearchState.init()
         Unit    = TermSearchState.init()
         Values  = TermSearchState.init()
@@ -171,11 +169,11 @@ module Process =
 module Comment =
 
     type Model = {
-        BuildingBlockInfo: BuildingBlockInfoState
+        BuildingBlockInfo: BuildingBlockInfoState option
     }
         with
             static member init() = {
-                BuildingBlockInfo = BuildingBlockInfoState.init()
+                BuildingBlockInfo = None
             }
 
 module Home =
